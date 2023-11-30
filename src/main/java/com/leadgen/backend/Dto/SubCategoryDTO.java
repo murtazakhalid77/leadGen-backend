@@ -1,25 +1,22 @@
-package com.leadgen.backend.model;
+package com.leadgen.backend.Dto;
 
-import com.leadgen.backend.audit.Auditable;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.validation.constraints.NotEmpty;
 
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-@Entity
-public class SubCategory  extends Auditable {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    Long id;
-    String subCategoryName;
+public class SubCategoryDTO {
 
+    Long id;
+    @NotEmpty(message = "sub category cannot be empty")
+    String subCategoryName;
 }

@@ -13,12 +13,19 @@ import javax.persistence.*;
 @NoArgsConstructor
 @Data
 @Entity
-
-public class UserReviews extends Auditable {
-    @Id
+public class Bid extends Auditable {
+    @javax.persistence.Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    Long id;
-    String note;
-    Long rating;
+    private Long Id;
+
+    String amount;
+
+    @ManyToOne
+    @JoinColumn(name = "bid_from_user_id")
+    private User bidFromUserId;
+    @ManyToOne
+    @JoinColumn(name = "bid_to_user_id")
+    private User bidToUserId;
+
 
 }
