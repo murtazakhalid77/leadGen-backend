@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 
 import javax.persistence.*;
 
@@ -13,12 +14,9 @@ import javax.persistence.*;
 @NoArgsConstructor
 @Data
 @Entity
-
-public class UserReviews extends Auditable {
+public class Test extends Auditable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
-    String note;
-    Long rating;
-
+    String tesname;
 }

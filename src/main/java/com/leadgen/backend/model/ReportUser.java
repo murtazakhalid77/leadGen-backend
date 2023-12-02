@@ -1,9 +1,21 @@
 package com.leadgen.backend.model;
 
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
+import com.leadgen.backend.audit.Auditable;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
-public class ReportUser {
+import javax.persistence.*;
+
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
+@Data
+@Entity
+public class ReportUser  extends Auditable {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
     String note;
     @ManyToOne

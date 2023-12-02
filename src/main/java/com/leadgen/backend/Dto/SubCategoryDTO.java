@@ -1,27 +1,27 @@
-package com.leadgen.backend.model;
+package com.leadgen.backend.Dto;
 
-import com.leadgen.backend.audit.Auditable;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
-
 import javax.persistence.Entity;
+import org.hibernate.annotations.Immutable;
+
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.validation.constraints.NotEmpty;
 
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
 @Entity
-@EnableJpaAuditing
-public class SubCategory  extends Auditable {
+@Immutable
+public class SubCategoryDTO {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
+    @NotEmpty(message = "sub category cannot be empty")
     String subCategoryName;
-
 }
