@@ -5,41 +5,44 @@ import com.leadgen.backend.service.GenericService;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.repository.CrudRepository;
+import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-@Service
-public class GenericServiceImpl<T, DTO> extends MapperUtil<T, DTO> implements GenericService<T, DTO> {
 
-    private final CrudRepository<T, Long> repository;
+
+public class GenericServiceImpl<T,U> implements GenericService<U> {
+
+    private final JpaRepository<T, Long> repository;
+    private final ModelMapper modelMapper;
     private final Class<T> entityClass;
-    private final Class<DTO> dtoClass;
+    private final Class<U> dtoClass;
 
-    public GenericServiceImpl(CrudRepository<T, Long> repository, ModelMapper modelMapper, Class<T> entityClass, Class<DTO> dtoClass) {
-        super(modelMapper);
+    public GenericServiceImpl(JpaRepository<T, Long> repository, ModelMapper modelMapper, Class<T> entityClass, Class<U> dtoClass) {
         this.repository = repository;
+        this.modelMapper = modelMapper;
         this.entityClass = entityClass;
         this.dtoClass = dtoClass;
     }
 
     @Override
-    public DTO save(DTO dto) {
-        T entity = toEntity(dto);
+    public U save(U dto) {
+        T entity = modelMapper.map(dto, entityClass);
         entity = repository.save(entity);
-        return toDTO(entity);
+        return modelMapper.map(entity, dtoClass);
     }
 
     @Override
-    public DTO update(DTO dto, Long id) {
+    public U update(U dto, Long id) {
         Optional<T> optionalEntity = repository.findById(id);
         if (optionalEntity.isPresent()) {
-            T entity = optionalEntity.get();
-            toEntity(dto);
+            T entity = modelMapper.map(dto, entityClass);
             entity = repository.save(entity);
-            return toDTO(entity);
+            return modelMapper.map(entity, dtoClass);
         } else {
             // Handle entity not found
             return null;
@@ -47,15 +50,19 @@ public class GenericServiceImpl<T, DTO> extends MapperUtil<T, DTO> implements Ge
     }
 
     @Override
-    public DTO getById(Long id) {
+    public U getById(Long id) {
         Optional<T> optionalEntity = repository.findById(id);
-        return optionalEntity.map(entity -> toDTO(entity)).orElse(null);
+        return optionalEntity.map(entity -> modelMapper.map(entity, dtoClass)).orElse(null);
     }
 
     @Override
-    public List<DTO> getAll() {
-        List<T> entities = (List<T>) repository.findAll();
-        return entities.stream().map(entity -> toDTO(entity)).collect(Collectors.toList());
+    public List<U> getAll() {
+        List<T> entities = repository.findAll();
+        List<U> dtos = new ArrayList<>();
+        for (T entity : entities) {
+            dtos.add(modelMapper.map(entity, dtoClass));
+        }
+        return dtos;
     }
 
     @Override
@@ -63,4 +70,5 @@ public class GenericServiceImpl<T, DTO> extends MapperUtil<T, DTO> implements Ge
         repository.deleteById(id);
     }
 }
+
 

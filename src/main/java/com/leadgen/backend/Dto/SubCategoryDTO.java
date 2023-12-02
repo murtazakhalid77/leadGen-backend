@@ -4,6 +4,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import javax.persistence.Entity;
+import org.hibernate.annotations.Immutable;
 
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -14,8 +16,11 @@ import javax.validation.constraints.NotEmpty;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
+@Entity
+@Immutable
 public class SubCategoryDTO {
-
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
     @NotEmpty(message = "sub category cannot be empty")
     String subCategoryName;

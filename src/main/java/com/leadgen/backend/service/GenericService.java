@@ -3,14 +3,14 @@ package com.leadgen.backend.service;
 
 import java.util.List;
 
-public interface GenericService<T, DTO> {
-    DTO save(DTO dto);
+public interface GenericService<U> {
+    U save(U dto);
 
-    DTO update(DTO dto, Long id);
+    U update(U dto, Long id);
 
-    DTO getById(Long id);
+    U getById(Long id);
 
-    List<DTO> getAll();
+    List<U> getAll();
 
     void delete(Long id);
 }

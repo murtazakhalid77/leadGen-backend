@@ -1,31 +1,35 @@
 package com.leadgen.backend.audit;
 
 import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
 import org.springframework.data.annotation.CreatedBy;
+import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedBy;
+import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import javax.persistence.Column;
 import javax.persistence.EntityListeners;
 import javax.persistence.MappedSuperclass;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
-import java.util.Date;
+import java.sql.Timestamp;
 
-@Getter
-@Setter
 @MappedSuperclass
-@EntityListeners(AuditingEntityListener.class)
-public class Auditable {
+@   Data
+@EntityListeners(value = { AuditingEntityListener.class })
+public abstract class Auditable {
+
     @CreatedBy
-    protected String createdBy;
-    @Temporal(TemporalType.TIMESTAMP)
-    protected Date createdDate;
+    @Column(name="created_by", updatable=false)
+    private String createdBy;
+
+    @CreatedDate
+    @Column(name="created_dt", updatable =false)
+    private Timestamp createdDt;
 
     @LastModifiedBy
-    protected String lastModifiedBy;
+    @Column(name="modified_by")
+    private String modifiedBy;
 
-    @Temporal(TemporalType.TIMESTAMP)
-    protected Date lastModifiedDate;
+    @LastModifiedDate
+    @Column(name="modified_dt")
+    private Timestamp modifiedDt;
 }
