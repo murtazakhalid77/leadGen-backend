@@ -15,36 +15,13 @@ import javax.validation.constraints.NotNull;
 public class LocationDTO {
     private Long id;
 
+    private String locality;
 
-    @NotEmpty(message = "Name cannot be empty")
-    private String name;
+    private String subLocality;
 
-    @NotEmpty(message = "Address cannot be empty")
-    private String address;
+    private String street;
 
-    @NotEmpty(message = "City cannot be empty")
-    private String city;
-
-    @NotEmpty(message = "Area cannot be empty")
-    private String area;
-
-    @NotEmpty(message = "State cannot be empty")
-    private String state;
-
-    @NotNull(message = "Postal code cannot be null")
-    private Integer postalCode;
-
-    @NotEmpty(message = "Country cannot be empty")
     private String country;
-
-    @NotNull(message = "Latitude cannot be null")
-    private Double latitude;
-
-    @NotNull(message = "Longitude cannot be null")
-    private Double longitude;
-
-    @NotNull(message = "Status cannot be null")
-    private Boolean status;
-
-
+    private String SubAdministrativeArea;
+    private String administrativeArea;
 }

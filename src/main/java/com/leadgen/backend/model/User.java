@@ -8,6 +8,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 
 @Builder
@@ -22,20 +23,19 @@ public class User extends Auditable {
     String firstName;
     String lastName;
     String userName;
+    String password;
+    String phoneNumber;
     String email;
     String deviceId;
-    Long OTP;
+    String OTP;
     Boolean otpFlag;
     String nationalIdentificationNumber;
     byte[] profilePic;
     boolean status;
-    @ManyToMany
-    @JoinTable(
-            name = "user_location",
-            joinColumns = @JoinColumn(name = "user_id"), // Name of the join column referring to User's ID
-            inverseJoinColumns = @JoinColumn(name = "location_id") // Name of the join column referring to Location's ID
-    )
-    private List<Location> locations;;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<Location> locations = new ArrayList<>();
+
 
     @OneToMany
     @JoinColumn(name = "user_id")
