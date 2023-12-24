@@ -14,6 +14,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 import static com.leadgen.backend.helpers.HelperClass.formatPhoneNumber;
@@ -49,6 +50,11 @@ public class UserServiceImpl extends GenericServiceImpl<User, UserDTO> implement
 
         });
         return true;
+    }
+
+    @Override
+    public List<User> finduserByStatus(Boolean statusValue) {
+        return userRepository.findByStatus(statusValue);
     }
 }
 
