@@ -11,6 +11,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Service;
 
+import java.lang.reflect.Array;
+import java.util.Arrays;
+
 import static com.leadgen.backend.helpers.HelperClass.formatPhoneNumber;
 
 @Service
@@ -32,9 +35,11 @@ public class LocationServiceImpl extends GenericServiceImpl<Location, LocationDT
     public void saveLocationForUser(LocationDTO locationDTO, String number) {
 
         Location location = modelMapper.map(locationDTO,Location.class);
-
+        Location location1=locationRepository.save(location);
         User user = userRepository.findByPhoneNumber(formatPhoneNumber(number)).orElseThrow(() -> new RuntimeException("User not found"));
-        location.setUser(user);
-        locationRepository.save(location);
+        user.setLocations(Arrays.asList(location1));
+
+        userRepository.save(user);
+
     }
 }

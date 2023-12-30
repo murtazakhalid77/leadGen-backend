@@ -1,5 +1,6 @@
 package com.leadgen.backend.Dto;
 
+import com.leadgen.backend.model.Category;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -24,4 +25,5 @@ public class SubCategoryDTO {
     Long id;
     @NotEmpty(message = "sub category cannot be empty")
     String subCategoryName;
+
 }

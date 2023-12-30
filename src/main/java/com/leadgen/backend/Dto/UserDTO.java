@@ -47,7 +47,7 @@ public class UserDTO {
     private String nationalIdentificationNumber;
 
     private byte[] profilePic;
-    private List<Location> locations;;
+    private List<LocationDTO> locations;;
 
 
     private List<UserReviews> reviews; //one user revibviw will have many user.

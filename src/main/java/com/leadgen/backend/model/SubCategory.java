@@ -1,27 +1,30 @@
 package com.leadgen.backend.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.leadgen.backend.audit.Auditable;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@Data
+@Getter
+@Setter
 @Entity
 @EnableJpaAuditing
 public class SubCategory  extends Auditable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    Long id;
-    String subCategoryName;
+    private Long id;
+
+    private String subCategoryName;
+
+    @JsonIgnore
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "category_id") // // Add CascadeType.PERSIST
+    Category category;
+
 
 }
