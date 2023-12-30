@@ -1,28 +1,26 @@
 package com.leadgen.backend.model;
 
 import com.leadgen.backend.audit.Auditable;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@Data
+@Getter
+@Setter
 @Entity
 public class Category extends Auditable {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long Id;
-   private String categoryName;
+    private Long id;
 
-    @OneToMany
-    @JoinColumn(name="id")
-    private List<SubCategory> subCategoryList;
+    private String categoryName;
 
-
+    @OneToMany(mappedBy = "category", cascade = CascadeType.ALL)
+    private List<SubCategory> subCategories = new ArrayList<>();
 }

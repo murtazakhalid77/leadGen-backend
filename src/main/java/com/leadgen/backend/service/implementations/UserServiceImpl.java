@@ -3,6 +3,7 @@ package com.leadgen.backend.service.implementations;
 import com.leadgen.backend.Dto.RegisterDto;
 import com.leadgen.backend.Dto.SubCategoryDTO;
 import com.leadgen.backend.Dto.UserDTO;
+import com.leadgen.backend.Dto.UserHomeDto;
 import com.leadgen.backend.model.SubCategory;
 import com.leadgen.backend.model.User;
 import com.leadgen.backend.repository.UserRepository;
@@ -49,6 +50,19 @@ public class UserServiceImpl extends GenericServiceImpl<User, UserDTO> implement
 
         });
         return true;
+    }
+
+    @Override
+    public UserHomeDto getLoggedInUser(String phoneNumber) {
+        Optional<User> userByPhoneNumber = userRepository.findByPhoneNumber(formatPhoneNumber(phoneNumber));
+        if(userByPhoneNumber.isPresent()){
+            return  UserHomeDto.builder()
+                    .firstName(userByPhoneNumber.get().getFirstName())
+                    .email(userByPhoneNumber.get().getEmail())
+                    .build();
+
+        }
+        throw new RuntimeException("User Not Found With The abovePhoneNumber");
     }
 }
 

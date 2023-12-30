@@ -25,5 +25,5 @@ public class CategoryDTO  {
     @Valid
     @NotNull(message = "Subcategory list cannot be null")
     @Size(min = 1, message = "At least one subcategory must be present")
-    private List<SubCategoryDTO> subCategoryList;
+    private List<SubCategoryDTO> subCategories;
 }

@@ -3,6 +3,7 @@ package com.leadgen.backend.controller;
 import com.leadgen.backend.Dto.RegisterDto;
 import com.leadgen.backend.Dto.TestDTO;
 import com.leadgen.backend.Dto.UserDTO;
+import com.leadgen.backend.Dto.UserHomeDto;
 import com.leadgen.backend.service.TestServiceInterface;
 import com.leadgen.backend.service.UserService;
 import lombok.AllArgsConstructor;
@@ -36,6 +37,21 @@ public class UserController extends GenericController<UserDTO> {
         } catch (Exception e) {
             // Return the exception message in the response
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
+    }
+
+    @GetMapping("/getLoggedInUser/{phoneNumber}")
+    public ResponseEntity<?> registerUser(@PathVariable String phoneNumber) {
+        try {
+            UserHomeDto userHomeDto = userService.getLoggedInUser(phoneNumber);
+            return ResponseEntity.ok().body(userHomeDto);
+        } catch (Exception e) {
+            // Log the exception for debugging purposes
+
+
+            // Handle the exception and return an appropriate error message
+            String errorMessage = "Failed to get logged-in user details.";
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorMessage);
         }
     }
 }

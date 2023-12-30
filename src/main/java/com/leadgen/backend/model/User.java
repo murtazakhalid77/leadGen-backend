@@ -1,21 +1,25 @@
 package com.leadgen.backend.model;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import com.leadgen.backend.audit.Auditable;
 import com.leadgen.backend.enums.UserType;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@Data
+@Getter
+@Setter
 @Entity
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 public class User extends Auditable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -33,7 +37,8 @@ public class User extends Auditable {
     byte[] profilePic;
     boolean status;
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany
+            @JoinColumn(name = "user_id")
     private List<Location> locations = new ArrayList<>();
 
 
@@ -48,7 +53,13 @@ public class User extends Auditable {
     @JoinColumn(name= "user_id")
     private List<Category> sellingCategory;
 
-    @OneToMany
-    @JoinColumn(name ="user_id")
-    private List<UserRequest> userRequests;
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    List<UserRequest> userRequests;
+
+
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(name = "user_roles",
+            joinColumns = @JoinColumn(name = "user_id") ,
+            inverseJoinColumns = @JoinColumn(name = "role_id"))
+    private Set<Roles> roles = new HashSet<>();
 }

@@ -1,22 +1,25 @@
 package com.leadgen.backend.model;
 
-import com.leadgen.backend.audit.Auditable;
 import lombok.*;
 
 import javax.persistence.*;
+import java.util.HashSet;
+import java.util.Set;
 
-@Builder
+@Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter
+@ToString
+@Builder
 @Entity
-
-public class UserReviews extends Auditable {
+@Table(name = "roles")
+public class Roles {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    Long id;
-    String note;
-    Long rating;
 
+    private Long id;
+
+    private String name;
 }
