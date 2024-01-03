@@ -4,6 +4,7 @@ import com.leadgen.backend.Dto.RegisterDto;
 import com.leadgen.backend.Dto.SubCategoryDTO;
 import com.leadgen.backend.Dto.UserDTO;
 import com.leadgen.backend.Dto.UserHomeDto;
+import com.leadgen.backend.model.Location;
 import com.leadgen.backend.model.SubCategory;
 import com.leadgen.backend.model.User;
 import com.leadgen.backend.repository.UserRepository;
@@ -15,6 +16,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 import static com.leadgen.backend.helpers.HelperClass.formatPhoneNumber;
@@ -55,14 +57,28 @@ public class UserServiceImpl extends GenericServiceImpl<User, UserDTO> implement
     @Override
     public UserHomeDto getLoggedInUser(String phoneNumber) {
         Optional<User> userByPhoneNumber = userRepository.findByPhoneNumber(formatPhoneNumber(phoneNumber));
-        if(userByPhoneNumber.isPresent()){
-            return  UserHomeDto.builder()
-                    .firstName(userByPhoneNumber.get().getFirstName())
-                    .email(userByPhoneNumber.get().getEmail())
-                    .build();
 
+        if (userByPhoneNumber.isPresent()) {
+            User user = userByPhoneNumber.get();
+            List<Location> locations = user.getLocations();
+
+            Location location = (locations != null && !locations.isEmpty()) ? locations.get(0) : null;
+
+            if (location != null) {
+                String address = location.getLocality() + location.getStreet() + location.getSubLocality() +
+                        location.getAdministrativeArea() + location.getCountry();
+
+                return UserHomeDto.builder()
+                        .firstName(user.getFirstName())
+                        .email(user.getEmail())
+                        .adress(address)
+                        .build();
+            } else {
+                throw new RuntimeException("Location details are null for the user");
+            }
+        } else {
+            throw new RuntimeException("User Not Found With The abovePhoneNumber");
         }
-        throw new RuntimeException("User Not Found With The abovePhoneNumber");
     }
-}
 
+}

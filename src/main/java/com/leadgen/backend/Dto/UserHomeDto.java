@@ -12,5 +12,6 @@ import lombok.NoArgsConstructor;
 public class UserHomeDto {
     String firstName;
     String email;
+    String adress;
 
 }
