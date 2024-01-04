@@ -12,7 +12,9 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Service;
 
 import java.lang.reflect.Array;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import static com.leadgen.backend.helpers.HelperClass.formatPhoneNumber;
 
@@ -33,13 +35,17 @@ public class LocationServiceImpl extends GenericServiceImpl<Location, LocationDT
 
     @Override
     public void saveLocationForUser(LocationDTO locationDTO, String number) {
+        Location location = modelMapper.map(locationDTO, Location.class);
+        Location savedLocation = locationRepository.save(location);
 
-        Location location = modelMapper.map(locationDTO,Location.class);
-        Location location1=locationRepository.save(location);
-        User user = userRepository.findByPhoneNumber(formatPhoneNumber(number)).orElseThrow(() -> new RuntimeException("User not found"));
-        user.setLocations(Arrays.asList(location1));
+        User user = userRepository.findByPhoneNumber(formatPhoneNumber(number))
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        List<Location> userLocations = new ArrayList<>();
+        userLocations.add(savedLocation); // Add the new location to the list
+
+        user.setLocations(userLocations); // Set the updated list of locations for the user
 
         userRepository.save(user);
-
     }
 }
