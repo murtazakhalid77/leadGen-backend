@@ -21,6 +21,8 @@ public class Category extends Auditable {
 
     private String categoryName;
 
-    @OneToMany(mappedBy = "category", cascade = CascadeType.ALL)
-    private List<SubCategory> subCategories = new ArrayList<>();
+    private String icons;
+    private String backgroundColor;
+
+
 }

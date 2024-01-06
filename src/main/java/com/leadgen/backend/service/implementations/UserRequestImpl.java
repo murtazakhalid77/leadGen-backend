@@ -1,14 +1,11 @@
 package com.leadgen.backend.service.implementations;
 
 import com.leadgen.backend.Dto.RequestDto;
-import com.leadgen.backend.Dto.SubCategoryDTO;
 import com.leadgen.backend.Dto.UserRequestDTO;
 import com.leadgen.backend.model.Category;
-import com.leadgen.backend.model.SubCategory;
 import com.leadgen.backend.model.User;
 import com.leadgen.backend.model.UserRequest;
 import com.leadgen.backend.repository.CategoryRepository;
-import com.leadgen.backend.repository.SubCategoryRepository;
 import com.leadgen.backend.repository.UserRepository;
 import com.leadgen.backend.repository.UserRequestRepository;
 import com.leadgen.backend.service.UserRequestService;

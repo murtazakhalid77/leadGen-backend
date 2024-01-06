@@ -15,15 +15,15 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-public class CategoryDTO  {
+public class CategoryDTO {
     private Long id;
 
     @NotEmpty(message = "Category name cannot be empty")
     @Size(min = 2, max = 50, message = "Category name must be between 2 and 50 characters")
     private String categoryName;
 
-    @Valid
-    @NotNull(message = "Subcategory list cannot be null")
-    @Size(min = 1, message = "At least one subcategory must be present")
-    private List<SubCategoryDTO> subCategories;
+    private String icons;
+    private String backgroundColor;
+
+
 }
