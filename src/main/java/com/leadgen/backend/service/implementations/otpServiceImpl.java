@@ -5,6 +5,8 @@ import com.leadgen.backend.model.User;
 import com.leadgen.backend.repository.UserRepository;
 import com.leadgen.backend.service.OtpService;
 import lombok.AllArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -16,6 +18,9 @@ import static com.leadgen.backend.helpers.HelperClass.generateRandomOTP;
 @Service
 @AllArgsConstructor
 public class otpServiceImpl implements OtpService {
+
+    @Autowired
+    private BCryptPasswordEncoder bCryptPasswordEncoder;
 
     private final OtpConfiguration otpConfiguration;
     private final UserRepository userRepository;
@@ -51,9 +56,10 @@ public class otpServiceImpl implements OtpService {
 
     @Override
     public Boolean cratePassword(String password, String number) {
+
         Optional<User> user = userRepository.findByPhoneNumber(formatPhoneNumber(number));
         if(user.isPresent()){
-            user.get().setPassword(password);
+            user.get().setPassword(bCryptPasswordEncoder.encode(password));
             userRepository.save(user.get());
             return true;
         }
