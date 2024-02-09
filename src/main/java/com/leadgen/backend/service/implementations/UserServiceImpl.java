@@ -77,4 +77,10 @@ public class UserServiceImpl extends GenericServiceImpl<User, UserDTO> implement
         }
     }
 
+    @Override
+    public List<User> finduserByStatus(Boolean statusValue) {
+        return userRepository.findByStatus(statusValue);
+    }
+}
+
 }
