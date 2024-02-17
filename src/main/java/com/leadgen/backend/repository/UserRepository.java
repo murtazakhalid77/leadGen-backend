@@ -1,5 +1,6 @@
 package com.leadgen.backend.repository;
 
+import com.leadgen.backend.model.Category;
 import com.leadgen.backend.model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -15,6 +16,7 @@ public interface UserRepository extends JpaRepository<User,Long> {
     Optional<User> findByPhoneNumber(String number);
 
     Optional<User> findByNationalIdentificationNumber(String nationalIdentificationNumber);
+    List<User> findBySellingCategory(Category category);
 
     @Query("SELECT u FROM User u WHERE u.status = :statusValue")
     List<User> findByStatus(@Param("statusValue") Boolean statusValue);
