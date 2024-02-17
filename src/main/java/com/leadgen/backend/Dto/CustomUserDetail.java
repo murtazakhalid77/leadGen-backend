@@ -11,7 +11,7 @@ import java.util.List;
 
 public class CustomUserDetail implements UserDetails {
 
-    private User user;
+    public User user;
 
     public CustomUserDetail(User user) {
         this.user = user;
@@ -19,14 +19,7 @@ public class CustomUserDetail implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        List<SimpleGrantedAuthority> authorityList = new ArrayList<>();
-
-        // Add roles with the "ROLE_" prefix
-        this.user.getRoles().forEach(role -> {
-            authorityList.add(new SimpleGrantedAuthority(role.getName()));
-        });
-
-        return authorityList;
+     return null;
     }
 
     public Long getUserId(){

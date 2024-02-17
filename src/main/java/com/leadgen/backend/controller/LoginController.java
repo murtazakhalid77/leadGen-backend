@@ -8,6 +8,7 @@ import com.leadgen.backend.service.implementations.MyUserDetailService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -46,4 +47,19 @@ public class LoginController {
 
         return ResponseEntity.ok(new AuthenticationResponse(jwtToken));
     }
+
+//    @PostMapping("user/forgot-password")
+//    public ResponseEntity<String> forgotPassword(@RequestParam String email) {
+//        userService.forgotPassword(email);
+//        return new ResponseEntity<>("Password reset email sent successfully.", HttpStatus.OK);
+//    }
+//
+//    @PostMapping("user/reset-password")
+//    public ResponseEntity<String> resetPassword(
+//            @RequestParam String email,
+//            @RequestParam String resetCode,
+//            @RequestParam String newPassword) {
+//        userService.resetPassword(email, resetCode, newPassword);
+//        return new ResponseEntity<>("Password reset successfully.", HttpStatus.OK);
+//    }
 }

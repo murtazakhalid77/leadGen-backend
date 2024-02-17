@@ -24,15 +24,14 @@ public class UserRequest extends Auditable {
     Boolean approvedBySystem;
     Boolean needsAdminApproval;
     String price;
-    @ManyToMany
-    @JoinTable(
-            name = "req_category",
-            joinColumns = @JoinColumn(name = "req_id"), // Name of the join column referring to User's ID
-            inverseJoinColumns = @JoinColumn(name = "category_id"))// Name of the join column referring to Location's ID
+    Long notifiedNumber;
+    Boolean notifiable;
+    @OneToOne
+    @JoinColumn(name = "category_id")
+    private Category category;
 
-    List<Category> category;
 
-            @OneToMany
+    @OneToMany
             @JoinColumn(name="user_request_id")
             private List<Bid> bids;
 

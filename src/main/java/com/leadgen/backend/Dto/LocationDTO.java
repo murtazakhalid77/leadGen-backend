@@ -24,4 +24,5 @@ public class LocationDTO {
     private String country;
     private String SubAdministrativeArea;
     private String administrativeArea;
+    private String deviceId;
 }

@@ -7,6 +7,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.sql.Timestamp;
+
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
@@ -15,9 +17,11 @@ public class RequestDto {
 
     String title;
     String description;
-    CategoryDTO category;
-    LocationDTO location;
+    CategoryDTO categoryy;
+    LocationDTO locationModel;
+    String createdDate;
     String number;
     String price;
+
 }
 

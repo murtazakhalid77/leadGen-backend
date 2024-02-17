@@ -1,8 +1,11 @@
 package com.leadgen.backend.service.implementations;
 
+import com.leadgen.backend.Dto.CategoryDTO;
+import com.leadgen.backend.Dto.LocationDTO;
 import com.leadgen.backend.Dto.RequestDto;
 import com.leadgen.backend.Dto.UserRequestDTO;
 import com.leadgen.backend.model.Category;
+import com.leadgen.backend.model.Location;
 import com.leadgen.backend.model.User;
 import com.leadgen.backend.model.UserRequest;
 import com.leadgen.backend.repository.CategoryRepository;
@@ -15,7 +18,9 @@ import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import static com.leadgen.backend.helpers.HelperClass.*;
 
@@ -36,7 +41,7 @@ public class UserRequestImpl extends GenericServiceImpl<UserRequest,UserRequestD
     }
     @Override
     public UserRequest saveUserRequest(RequestDto requestDto) throws IOException {
-        Category category = categoryRepository.findByCategoryName(requestDto.getCategory().getCategoryName());
+        Category category = categoryRepository.findByCategoryName(requestDto.getCategoryy().getCategoryName());
         User user = userRepository.findByPhoneNumber(formatPhoneNumber(requestDto.getNumber())).orElse(null);
 
         if (category != null && user != null) {
@@ -69,29 +74,37 @@ public class UserRequestImpl extends GenericServiceImpl<UserRequest,UserRequestD
                         .title(requestDto.getTitle())
                         .description(requestDto.getDescription())
                         .price(requestDto.getPrice())
-                        .category(Collections.singletonList(category))
+                        .category(category)
                         .user(user)
+                        .notifiedNumber(0L)
+                        .notifiable(Boolean.TRUE)
                         .approvedBySystem(true)
                         .build();
             } else if (isNeutralSentiment && !hasProfanity) {
                 // Neutral sentiment with no profanity, needs further analysis or default action
                 userRequest = UserRequest.builder()
                         .needsAdminApproval(false)
+                        .title(requestDto.getTitle())
                         .description(requestDto.getDescription())
                         .price(requestDto.getPrice())
-                        .category(Collections.singletonList(category))
+                        .category(category)
                         .user(user)
-                        .approvedBySystem(false) // Needs further analysis or default action
+                        .notifiedNumber(0L)
+                        .notifiable(Boolean.TRUE)
+                        .approvedBySystem(true) // Needs further analysis or default action
                         .build();
             } else {
                 // Negative sentiment or has profanity
                 userRequest = UserRequest.builder()
-                        .needsAdminApproval(true) // Needs admin approval for negative sentiment or profanity
+                        .needsAdminApproval(true)
+                        .title(requestDto.getTitle())
                         .description(requestDto.getDescription())
                         .price(requestDto.getPrice())
-                        .category(Collections.singletonList(category))
+                        .category(category)
+                        .notifiedNumber(0L)
+                        .notifiable(Boolean.TRUE)
                         .user(user)
-                        .approvedBySystem(false)
+                        .approvedBySystem(false )
                         .build();
             }
 
@@ -99,8 +112,57 @@ public class UserRequestImpl extends GenericServiceImpl<UserRequest,UserRequestD
             // Assuming UserRequestDTO is the DTO representation of UserRequest, convert and return it
             return savedUserRequest;
         } else {
-            // Handle cases where category or user is not found
-            return null;
+          throw new RuntimeException("catregory Not found");
         }
+    }
+
+    @Override
+    public List<RequestDto> getAllUserRequests(String phoneNumber) {
+        String phoneNumber1=formatPhoneNumber(phoneNumber);
+        List<UserRequest> userRequests = userRequestRepository.findByUserPhoneNumberOrderByCreatedDtDesc(phoneNumber1);
+        return mapToRequestDtoList(userRequests);
+    }
+
+    private List<RequestDto> mapToRequestDtoList(List<UserRequest> userRequests) {
+        return userRequests.stream()
+                .map(this::mapToRequestDto)
+                .collect(Collectors.toList());
+    }
+
+    private RequestDto mapToRequestDto(UserRequest userRequest) {
+        CategoryDTO categoryDTO = mapToCategoryDTO(userRequest.getCategory());
+        LocationDTO locationDTO = mapToLocationDTO(userRequest.getUser().getLocations().get(0));
+
+        return RequestDto.builder()
+                .description(userRequest.getDescription())
+                .createdDate(String.valueOf(userRequest.getCreatedDt()))
+                .title(userRequest.getTitle())
+                .categoryy(categoryDTO)
+                .locationModel(locationDTO)
+                .number(userRequest.getUser().getPhoneNumber())
+                .price(userRequest.getPrice())
+                .build();
+    }
+
+    private CategoryDTO mapToCategoryDTO(Category category) {
+        return CategoryDTO.builder()
+                .id(category.getId())
+                .categoryName(category.getCategoryName())
+                .backgroundColor(category.getBackgroundColor())
+                .icons(category.getIcons())
+                .build();
+    }
+
+    public static LocationDTO mapToLocationDTO(Location location) {
+        return LocationDTO.builder()
+                .id(location.getId())
+                .locality(location.getLocality())
+                .subLocality(location.getSubLocality())
+                .street(location.getStreet())
+                .country(location.getCountry())
+                .deviceId("dda")
+                .SubAdministrativeArea(location.getSubAdministrativeArea())
+                .administrativeArea(location.getAdministrativeArea())
+                .build();
     }
 }
