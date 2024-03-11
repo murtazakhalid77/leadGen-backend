@@ -1,8 +1,6 @@
 package com.leadgen.backend.service.implementations;
 
-import com.leadgen.backend.Dto.RegisterDto;
-import com.leadgen.backend.Dto.UserDTO;
-import com.leadgen.backend.Dto.UserHomeDto;
+import com.leadgen.backend.Dto.*;
 import com.leadgen.backend.model.Location;
 import com.leadgen.backend.model.User;
 import com.leadgen.backend.repository.UserRepository;
@@ -14,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static com.leadgen.backend.helpers.HelperClass.formatPhoneNumber;
 
@@ -78,9 +77,23 @@ public class UserServiceImpl extends GenericServiceImpl<User, UserDTO> implement
     }
 
     @Override
+    public UserTypeDto getUserType(String phoneNumber) {
+        Optional<User> userDetail = userRepository.findByPhoneNumber(formatPhoneNumber(phoneNumber));
+
+        if(userDetail.isPresent()){
+            User user = userDetail.get();
+
+            return UserTypeDto.builder()
+                    .userType(user.getUserType())
+                    .build();
+        }else {
+            throw new RuntimeException("User Not Found With The abovePhoneNumber");
+        }
+    }
+
+    @Override
     public List<User> finduserByStatus(Boolean statusValue) {
-        return userRepository.findByStatus(statusValue);
+        return this.userRepository.findByStatus(statusValue);
     }
 }
 
-}

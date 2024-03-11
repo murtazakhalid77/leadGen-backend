@@ -1,10 +1,7 @@
 package com.leadgen.backend.controller;
 
-import com.leadgen.backend.Dto.RegisterDto;
-import com.leadgen.backend.Dto.TestDTO;
-import com.leadgen.backend.Dto.UserDTO;
+import com.leadgen.backend.Dto.*;
 import com.leadgen.backend.model.User;
-import com.leadgen.backend.Dto.UserHomeDto;
 import com.leadgen.backend.service.TestServiceInterface;
 import com.leadgen.backend.service.UserService;
 import lombok.AllArgsConstructor;
@@ -18,7 +15,7 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/user/")
-@CrossOrigin(origins = "http://localhost:4200")
+@CrossOrigin("*")
 public class UserController extends GenericController<UserDTO> {
 
     private final UserService userService;
@@ -64,6 +61,22 @@ public class UserController extends GenericController<UserDTO> {
         try {
             List<User> user = userService.finduserByStatus(status);
             if(!user.isEmpty()){
+                return ResponseEntity.ok(user);
+            }
+            else {
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to get user. Please try again.");
+            }
+        } catch (Exception e) {
+            // Return the exception message in the response
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
+    }
+
+    @GetMapping("/getUserType/{phoneNumber}")
+    public ResponseEntity<?> getUserTypeByPhoneNumber(@PathVariable String phoneNumber){
+        try {
+            UserTypeDto user = userService.getUserType(phoneNumber);
+            if(user != null){
                 return ResponseEntity.ok(user);
             }
             else {

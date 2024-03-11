@@ -2,6 +2,7 @@ package com.leadgen.backend.service;
 
 import com.leadgen.backend.Dto.RegisterDto;
 import com.leadgen.backend.Dto.UserDTO;
+import com.leadgen.backend.Dto.UserTypeDto;
 import com.leadgen.backend.model.User;
 
 import java.util.List;
@@ -13,4 +14,6 @@ public interface UserService extends GenericService<UserDTO>{
 
     List<User> finduserByStatus(Boolean status);
     UserHomeDto getLoggedInUser(String phoneNumber);
+
+    UserTypeDto getUserType(String phoneNumber) ;
 }
