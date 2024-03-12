@@ -16,4 +16,6 @@ public interface UserService extends GenericService<UserDTO>{
     UserHomeDto getLoggedInUser(String phoneNumber);
 
     UserTypeDto getUserType(String phoneNumber) ;
+
+    String forgotPassword(String number);
 }

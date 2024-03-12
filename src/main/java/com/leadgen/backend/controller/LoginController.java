@@ -4,6 +4,7 @@ import com.leadgen.backend.Dto.LoginCredentials;
 import com.leadgen.backend.helpers.HelperClass;
 import com.leadgen.backend.security.util.AuthenticationResponse;
 import com.leadgen.backend.security.util.JwtUtil;
+import com.leadgen.backend.service.UserService;
 import com.leadgen.backend.service.implementations.MyUserDetailService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,6 +28,7 @@ public class LoginController {
     private JwtUtil jwtUtil;
     @Autowired
     private MyUserDetailService myUserDetailService;
+    private UserService userService;
 
     private static final Logger logger = LoggerFactory.getLogger(LoginController.class);
     @PostMapping("/login")
@@ -48,18 +50,19 @@ public class LoginController {
         return ResponseEntity.ok(new AuthenticationResponse(jwtToken));
     }
 
-//    @PostMapping("user/forgot-password")
-//    public ResponseEntity<String> forgotPassword(@RequestParam String email) {
-//        userService.forgotPassword(email);
-//        return new ResponseEntity<>("Password reset email sent successfully.", HttpStatus.OK);
-//    }
-//
-//    @PostMapping("user/reset-password")
-//    public ResponseEntity<String> resetPassword(
-//            @RequestParam String email,
-//            @RequestParam String resetCode,
-//            @RequestParam String newPassword) {
-//        userService.resetPassword(email, resetCode, newPassword);
-//        return new ResponseEntity<>("Password reset successfully.", HttpStatus.OK);
-//    }
+    @PostMapping("user/forgot-password/{number}")
+    public ResponseEntity<String> forgotPassword(@PathVariable String number) {
+        try {
+            String otpSent = userService.forgotPassword(number);
+            if (otpSent != null) {
+                return ResponseEntity.ok(otpSent);
+            } else {
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to send OTP. Please try again.");
+            }
+        } catch (Exception e) {
+            // Return the exception message in the response
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
+    }
+
 }

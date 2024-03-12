@@ -1,10 +1,12 @@
 package com.leadgen.backend.service.implementations;
 
 import com.leadgen.backend.Dto.*;
+import com.leadgen.backend.configuration.OtpConfiguration;
 import com.leadgen.backend.model.Location;
 import com.leadgen.backend.model.User;
 import com.leadgen.backend.repository.UserRepository;
 import com.leadgen.backend.service.UserService;
+import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -15,13 +17,16 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static com.leadgen.backend.helpers.HelperClass.formatPhoneNumber;
+import static com.leadgen.backend.helpers.HelperClass.generateRandomOTP;
 
 @Service
+
 public class UserServiceImpl extends GenericServiceImpl<User, UserDTO> implements UserService {
 
 
     @Autowired
     UserRepository userRepository;
+     OtpConfiguration otpConfiguration;
 
     @Autowired
     public UserServiceImpl(JpaRepository<User, Long> repository, ModelMapper modelMapper) {
@@ -90,6 +95,35 @@ public class UserServiceImpl extends GenericServiceImpl<User, UserDTO> implement
             throw new RuntimeException("User Not Found With The abovePhoneNumber");
         }
     }
+
+    @Override
+    public String forgotPassword(String number) {
+        Optional<User> user = userRepository.findByPhoneNumber(formatPhoneNumber(number));
+
+if (user.isPresent()){
+    String otp = generateRandomOTP();
+    String otpMessage = "Your Forgot Password OTP is: " + otp;
+    String formatPhoneNumber = formatPhoneNumber(number);
+
+    boolean otpCheck = otpConfiguration.sendSMS("Lead Gen", formatPhoneNumber, otpMessage);
+    if (otpCheck) {
+        User newUser = User.builder()
+                .OTP(otp)
+                .phoneNumber(formatPhoneNumber)
+                .status(true)
+                .otpFlag(false)
+                .build();
+        userRepository.save(newUser);
+
+    }
+    return otp;
+}
+else {
+    throw new RuntimeException("User Not Found");
+}
+
+    }
+
 
     @Override
     public List<User> finduserByStatus(Boolean statusValue) {
