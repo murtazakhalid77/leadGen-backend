@@ -28,6 +28,7 @@ public class LoginController {
     private JwtUtil jwtUtil;
     @Autowired
     private MyUserDetailService myUserDetailService;
+    @Autowired
     private UserService userService;
 
     private static final Logger logger = LoggerFactory.getLogger(LoginController.class);

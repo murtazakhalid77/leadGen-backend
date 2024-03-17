@@ -87,4 +87,22 @@ public class UserController extends GenericController<UserDTO> {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
     }
+
+    @PutMapping("/updatePassword/{number}/{password}")
+    public ResponseEntity<?> updateUserPassword(@PathVariable String number,@PathVariable String password){
+        try {
+            Optional<User> user = userService.updatePassword(number, password);
+            if(user.isPresent()){
+                return ResponseEntity.ok(user);
+            }
+            else {
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to get user. Please try again.");
+            }
+        } catch (Exception e) {
+            // Return the exception message in the response
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
+    }
+
+
 }

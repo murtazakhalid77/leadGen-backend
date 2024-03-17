@@ -10,6 +10,7 @@ import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -26,6 +27,8 @@ public class UserServiceImpl extends GenericServiceImpl<User, UserDTO> implement
 
     @Autowired
     UserRepository userRepository;
+    @Autowired
+    private BCryptPasswordEncoder bCryptPasswordEncoder;
      OtpConfiguration otpConfiguration;
 
     @Autowired
@@ -100,28 +103,40 @@ public class UserServiceImpl extends GenericServiceImpl<User, UserDTO> implement
     public String forgotPassword(String number) {
         Optional<User> user = userRepository.findByPhoneNumber(formatPhoneNumber(number));
 
-if (user.isPresent()){
-    String otp = generateRandomOTP();
-    String otpMessage = "Your Forgot Password OTP is: " + otp;
-    String formatPhoneNumber = formatPhoneNumber(number);
+        if (user.isPresent()){
+            String otp = generateRandomOTP();
+            String otpMessage = "Your Forgot Password OTP is: " + otp;
+            String formatPhoneNumber = formatPhoneNumber(number);
 
-    boolean otpCheck = otpConfiguration.sendSMS("Lead Gen", formatPhoneNumber, otpMessage);
-    if (otpCheck) {
-        User newUser = User.builder()
-                .OTP(otp)
-                .phoneNumber(formatPhoneNumber)
-                .status(true)
-                .otpFlag(false)
-                .build();
-        userRepository.save(newUser);
+//            boolean otpCheck = otpConfiguration.sendSMS("Lead Gen", formatPhoneNumber, otpMessage);
+//            if (otpCheck) {
+//                User newUser = User.builder()
+//                        .OTP(otp)
+//                        .phoneNumber(formatPhoneNumber)
+//                        .status(true)
+//                        .otpFlag(false)
+//                        .build();
+//                userRepository.save(newUser);
+//
+//            }
+            return otp;
+        }
+        else {
+            throw new RuntimeException("User Not Found");
+        }
 
     }
-    return otp;
-}
-else {
-    throw new RuntimeException("User Not Found");
-}
 
+    @Override
+    public Optional<User> updatePassword(String number, String password) {
+        Optional<User> userInfo = userRepository.findByPhoneNumber(formatPhoneNumber(number));
+
+        userInfo.ifPresent(user -> {
+            user.setPassword(bCryptPasswordEncoder.encode(password));
+            userRepository.save(user);
+        });
+
+        return userInfo;
     }
 
 
