@@ -38,11 +38,6 @@ public class User extends Auditable {
     boolean status;
 
     @OneToMany
-            @JoinColumn(name = "user_id")
-    private List<Location> locations = new ArrayList<>();
-
-
-    @OneToMany
     @JoinColumn(name = "user_id")
     private List<UserReviews> reviews; //one user revibviw will have many user.
 

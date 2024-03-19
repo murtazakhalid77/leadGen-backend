@@ -18,7 +18,7 @@ public class RequestDto {
     String title;
     String description;
     CategoryDTO categoryy;
-    LocationDTO locationModel;
+    String locationModel;
     String createdDate;
     String number;
     String price;

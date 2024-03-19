@@ -26,6 +26,10 @@ public class UserRequest extends Auditable {
     String price;
     Long notifiedNumber;
     Boolean notifiable;
+
+    private String location;
+
+
     @OneToOne
     @JoinColumn(name = "category_id")
     private Category category;

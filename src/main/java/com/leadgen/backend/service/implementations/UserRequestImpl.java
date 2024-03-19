@@ -76,6 +76,7 @@ public class UserRequestImpl extends GenericServiceImpl<UserRequest,UserRequestD
                         .price(requestDto.getPrice())
                         .category(category)
                         .user(user)
+                        .location(requestDto.getLocationModel().toString())
                         .notifiedNumber(0L)
                         .notifiable(Boolean.TRUE)
                         .approvedBySystem(true)
@@ -88,6 +89,7 @@ public class UserRequestImpl extends GenericServiceImpl<UserRequest,UserRequestD
                         .description(requestDto.getDescription())
                         .price(requestDto.getPrice())
                         .category(category)
+                        .location(requestDto.getLocationModel().toString())
                         .user(user)
                         .notifiedNumber(0L)
                         .notifiable(Boolean.TRUE)
@@ -101,6 +103,7 @@ public class UserRequestImpl extends GenericServiceImpl<UserRequest,UserRequestD
                         .description(requestDto.getDescription())
                         .price(requestDto.getPrice())
                         .category(category)
+                        .location(requestDto.getLocationModel().toString())
                         .notifiedNumber(0L)
                         .notifiable(Boolean.TRUE)
                         .user(user)
@@ -129,16 +132,27 @@ public class UserRequestImpl extends GenericServiceImpl<UserRequest,UserRequestD
                 .collect(Collectors.toList());
     }
 
+    private Location mapToLocationDomain(LocationDTO locationDTO){
+        return Location.builder()
+                .administrativeArea(locationDTO.getAdministrativeArea())
+                .country(locationDTO.getCountry())
+                .id(locationDTO.getId())
+                .street(locationDTO.getStreet())
+                .subLocality(locationDTO.getSubLocality())
+                .SubAdministrativeArea(locationDTO.getSubAdministrativeArea())
+                .build();
+    }
+
     private RequestDto mapToRequestDto(UserRequest userRequest) {
         CategoryDTO categoryDTO = mapToCategoryDTO(userRequest.getCategory());
-        LocationDTO locationDTO = mapToLocationDTO(userRequest.getUser().getLocations().get(0));
+
 
         return RequestDto.builder()
                 .description(userRequest.getDescription())
                 .createdDate(String.valueOf(userRequest.getCreatedDt()))
                 .title(userRequest.getTitle())
                 .categoryy(categoryDTO)
-                .locationModel(locationDTO)
+                .locationModel(userRequest.getLocation())
                 .number(userRequest.getUser().getPhoneNumber())
                 .price(userRequest.getPrice())
                 .build();
