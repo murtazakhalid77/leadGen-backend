@@ -29,7 +29,8 @@ public class UserServiceImpl extends GenericServiceImpl<User, UserDTO> implement
     UserRepository userRepository;
     @Autowired
     private BCryptPasswordEncoder bCryptPasswordEncoder;
-     OtpConfiguration otpConfiguration;
+    @Autowired
+    OtpConfiguration otpConfiguration;
 
     @Autowired
     public UserServiceImpl(JpaRepository<User, Long> repository, ModelMapper modelMapper) {
@@ -51,6 +52,7 @@ public class UserServiceImpl extends GenericServiceImpl<User, UserDTO> implement
             user.setLastName(registerDto.getLastName());
             user.setNationalIdentificationNumber(registerDto.getCnic());
             user.setEmail(registerDto.getEmail());
+            user.setDeviceId(registerDto.getFcmToken());
             userRepository.save(user);
 
         });
@@ -63,22 +65,14 @@ public class UserServiceImpl extends GenericServiceImpl<User, UserDTO> implement
 
         if (userByPhoneNumber.isPresent()) {
             User user = userByPhoneNumber.get();
-            List<Location> locations = user.getLocations();
 
-            Location location = (locations != null && !locations.isEmpty()) ? locations.get(0) : null;
-
-            if (location != null) {
-                String address = location.getLocality() + location.getStreet() + location.getSubLocality() +
-                        location.getAdministrativeArea() + location.getCountry();
 
                 return UserHomeDto.builder()
                         .firstName(user.getFirstName())
                         .email(user.getEmail())
-                        .adress(address)
                         .build();
-            } else {
-                throw new RuntimeException("Location details are null for the user");
-            }
+
+
         } else {
             throw new RuntimeException("User Not Found With The abovePhoneNumber");
         }
@@ -108,17 +102,17 @@ public class UserServiceImpl extends GenericServiceImpl<User, UserDTO> implement
             String otpMessage = "Your Forgot Password OTP is: " + otp;
             String formatPhoneNumber = formatPhoneNumber(number);
 
-//            boolean otpCheck = otpConfiguration.sendSMS("Lead Gen", formatPhoneNumber, otpMessage);
-//            if (otpCheck) {
-//                User newUser = User.builder()
-//                        .OTP(otp)
-//                        .phoneNumber(formatPhoneNumber)
-//                        .status(true)
-//                        .otpFlag(false)
-//                        .build();
-//                userRepository.save(newUser);
-//
-//            }
+            boolean otpCheck = otpConfiguration.sendSMS("Lead Gen", formatPhoneNumber, otpMessage);
+            if (otpCheck) {
+                User newUser = User.builder()
+                        .OTP(otp)
+                        .phoneNumber(formatPhoneNumber)
+                        .status(true)
+                        .otpFlag(false)
+                        .build();
+                userRepository.save(newUser);
+
+            }
             return otp;
         }
         else {

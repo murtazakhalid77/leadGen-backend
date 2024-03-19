@@ -44,7 +44,7 @@ public class LocationServiceImpl extends GenericServiceImpl<Location, LocationDT
         List<Location> userLocations = new ArrayList<>();
         userLocations.add(savedLocation); // Add the new location to the list
         user.setDeviceId(locationDTO.getDeviceId());
-        user.setLocations(userLocations); // Set the updated list of locations for the user
+
 
         userRepository.save(user);
     }

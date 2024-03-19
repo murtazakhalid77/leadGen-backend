@@ -15,4 +15,5 @@ public class RegisterDto {
     String cnic;
     String email;
     String phoneNumber;
+    String fcmToken;
 }
