@@ -8,6 +8,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.sql.Timestamp;
+import java.util.List;
 
 @Builder
 @AllArgsConstructor
@@ -22,6 +23,7 @@ public class RequestDto {
     String createdDate;
     String number;
     String price;
+    UserDTO user;
 
 }
 

@@ -68,7 +68,6 @@ public class NotificationScheduler {
                             userRequest.setNotifiable(false);
                         }
 
-                        // Save the updated UserRequest to the database
                         userRequestRepository.save(userRequest);
                     } catch (Exception e) {
                         logger.error("Error sending notification to device: {}", user.getDeviceId(), e);

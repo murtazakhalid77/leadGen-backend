@@ -8,6 +8,8 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.sql.Timestamp;
+import java.time.LocalDate;
 import java.util.List;
 
 @Repository
@@ -19,4 +21,13 @@ public interface UserRequestRepository extends JpaRepository<UserRequest,Long> {
     List<UserRequest> findUserRequestsToNotify(@Param("category") Category category);
 
     List<UserRequest> findByUserPhoneNumberOrderByCreatedDtDesc(String phoneNumber);
+
+    List<UserRequest> findByCategoryAndApprovedBySystemTrueAndNotifiableTrueAndNotifiedNumberGreaterThanAndCreatedDtBetweenOrderByCreatedDtDesc(
+            Category category, Long notifiedNumber, Timestamp createdDt, Timestamp createdDt2);
+
+
+
+
+
+
 }
