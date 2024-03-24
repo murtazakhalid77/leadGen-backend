@@ -10,4 +10,6 @@ import java.util.List;
 public interface UserRequestService extends GenericService<UserRequestDTO> {
     UserRequest saveUserRequest(RequestDto requestDto) throws IOException;
     List<RequestDto> getAllUserRequests(String phoneNumber);
+
+    List<RequestDto> getSellerNotifications(String categoryName);
 }
