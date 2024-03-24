@@ -1,13 +1,7 @@
 package com.leadgen.backend.service.implementations;
 
-import com.leadgen.backend.Dto.CategoryDTO;
-import com.leadgen.backend.Dto.LocationDTO;
-import com.leadgen.backend.Dto.RequestDto;
-import com.leadgen.backend.Dto.UserRequestDTO;
-import com.leadgen.backend.model.Category;
-import com.leadgen.backend.model.Location;
-import com.leadgen.backend.model.User;
-import com.leadgen.backend.model.UserRequest;
+import com.leadgen.backend.Dto.*;
+import com.leadgen.backend.model.*;
 import com.leadgen.backend.repository.CategoryRepository;
 import com.leadgen.backend.repository.UserRepository;
 import com.leadgen.backend.repository.UserRequestRepository;
@@ -17,10 +11,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.sql.Timestamp;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static com.leadgen.backend.helpers.HelperClass.*;
 
@@ -126,6 +126,42 @@ public class UserRequestImpl extends GenericServiceImpl<UserRequest,UserRequestD
         return mapToRequestDtoList(userRequests);
     }
 
+    @Override
+    public List<RequestDto> getSellerNotifications(String categoryName) {
+        LocalDateTime startOfToday = LocalDate.now().atStartOfDay();
+        LocalDateTime startOfYesterday = LocalDate.now().minusDays(1).atStartOfDay();
+
+        // Convert LocalDateTime to Instant and then to Timestamp
+        Instant startTodayInstant = startOfToday.atZone(ZoneId.systemDefault()).toInstant();
+        Instant startYesterdayInstant = startOfYesterday.atZone(ZoneId.systemDefault()).toInstant();
+
+        Timestamp startTodayTimestamp = Timestamp.from(startTodayInstant);
+        Timestamp startYesterdayTimestamp = Timestamp.from(startYesterdayInstant);
+
+        List<UserRequest> userRequests;
+        try {
+
+            Category category = categoryRepository.findByCategoryName(categoryName);
+            // Retrieve user requests from the repository
+            userRequests = userRequestRepository.findByCategoryAndApprovedBySystemTrueAndNotifiableTrueAndNotifiedNumberGreaterThanAndCreatedDtBetweenOrderByCreatedDtDesc(category,0L, startYesterdayTimestamp, startTodayTimestamp);
+        } catch (Exception e) {
+            // Handle any exceptions that occur during data retrieval
+            e.printStackTrace();
+            // Log the error or perform any other necessary actions
+            return Collections.emptyList(); // Return an empty list indicating no data found
+        }
+
+        // Check if no data is found
+        if (userRequests == null || userRequests.isEmpty()) {
+            // Handle the case where no data is found
+            System.out.println("No user requests found");
+            return Collections.emptyList(); // Return an empty list indicating no data found
+        }
+
+        // Convert UserRequest entities to RequestDto objects
+        return mapToRequestDtoList(userRequests);
+    }
+
     private List<RequestDto> mapToRequestDtoList(List<UserRequest> userRequests) {
         return userRequests.stream()
                 .map(this::mapToRequestDto)
@@ -146,17 +182,34 @@ public class UserRequestImpl extends GenericServiceImpl<UserRequest,UserRequestD
     private RequestDto mapToRequestDto(UserRequest userRequest) {
         CategoryDTO categoryDTO = mapToCategoryDTO(userRequest.getCategory());
 
-
+        UserDTO UserDto = mapToUserDto(userRequest.getUser());
         return RequestDto.builder()
                 .description(userRequest.getDescription())
                 .createdDate(String.valueOf(userRequest.getCreatedDt()))
                 .title(userRequest.getTitle())
                 .categoryy(categoryDTO)
+                .user(UserDto)
                 .locationModel(userRequest.getLocation())
                 .number(userRequest.getUser().getPhoneNumber())
                 .price(userRequest.getPrice())
                 .build();
     }
+
+
+    private UserDTO mapToUserDto(User user) {
+        return UserDTO.builder()
+                .userName(user.getUserName())
+                .email(user.getEmail())
+                .firstName(user.getFirstName())
+                .lastName(user.getLastName())
+                .OTP(user.getOTP())
+                .otpFlag(user.getOtpFlag())
+                .userType(user.getUserType())
+                .id(user.getId()).build();
+
+
+    }
+
 
     private CategoryDTO mapToCategoryDTO(Category category) {
         return CategoryDTO.builder()

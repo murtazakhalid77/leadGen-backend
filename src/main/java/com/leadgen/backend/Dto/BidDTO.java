@@ -1,5 +1,6 @@
 package com.leadgen.backend.Dto;
 
+import com.leadgen.backend.model.User;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -19,8 +20,8 @@ public class BidDTO  {
         private String amount;
 
         @NotNull(message = "Bid from user ID cannot be null")
-        private Long bidFromUserId;
+        private User bidFromUserId;
 
         @NotNull(message = "Bid to user ID cannot be null")
-        private Long bidToUserId;
+        private User bidToUserId;
 }

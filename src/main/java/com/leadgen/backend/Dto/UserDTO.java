@@ -40,14 +40,14 @@ public class UserDTO {
     @NotEmpty(message = "device id cannot be empty")
     private String deviceId;
 
-    private Long OTP;
+    private String OTP;
 
     private Boolean otpFlag;
 
     private String nationalIdentificationNumber;
 
     private byte[] profilePic;
-    private List<LocationDTO> locations;;
+
 
 
     private List<UserReviews> reviews; //one user revibviw will have many user.

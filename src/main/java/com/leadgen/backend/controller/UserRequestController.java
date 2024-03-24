@@ -38,4 +38,10 @@ public class UserRequestController extends GenericController<UserRequestDTO> {
         return new ResponseEntity<>(userRequests, HttpStatus.OK);
     }
 
+    @GetMapping("/getAllSellerRequest/{categoryName}")
+    public ResponseEntity<List<RequestDto>> getAllSellerRequest(@PathVariable("categoryName") String categoryName) {
+        List<RequestDto> userRequests = userRequestService.getSellerNotifications(categoryName);
+        return new ResponseEntity<List<RequestDto>>(userRequests, HttpStatus.OK);
+    }
+
 }

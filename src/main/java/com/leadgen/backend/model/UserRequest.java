@@ -44,8 +44,4 @@ public class UserRequest extends Auditable {
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "user_id")
     User user;
-
-
-
-
 }
