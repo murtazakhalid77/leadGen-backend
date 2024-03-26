@@ -104,12 +104,11 @@ public class UserServiceImpl extends GenericServiceImpl<User, UserDTO> implement
 
             boolean otpCheck = otpConfiguration.sendSMS("Lead Gen", formatPhoneNumber, otpMessage);
             if (otpCheck) {
-                User newUser = User.builder()
-                        .OTP(otp)
-                        .phoneNumber(formatPhoneNumber)
-                        .status(true)
-                        .otpFlag(false)
-                        .build();
+                User newUser = user.get();
+                newUser.setOTP(otp);
+                newUser.setStatus(true);
+                newUser.setOtpFlag(false);
+
                 userRepository.save(newUser);
 
             }
@@ -122,15 +121,38 @@ public class UserServiceImpl extends GenericServiceImpl<User, UserDTO> implement
     }
 
     @Override
-    public Optional<User> updatePassword(String number, String password) {
+    public User updatePassword(String number, String password) {
         Optional<User> userInfo = userRepository.findByPhoneNumber(formatPhoneNumber(number));
 
-        userInfo.ifPresent(user -> {
+        if(userInfo.isPresent()){
+            User user = userInfo.get();
+
             user.setPassword(bCryptPasswordEncoder.encode(password));
             userRepository.save(user);
-        });
 
-        return userInfo;
+            return user;
+        }
+
+        return null;
+    }
+
+    @Override
+    public User updateUserInformation(String name, String updatedPhone, String email, String userPhone) {
+        Optional<User> userInfo = userRepository.findByPhoneNumber(formatPhoneNumber(userPhone));
+        Optional<User> phoneCheck = userRepository.findByPhoneNumber(formatPhoneNumber(updatedPhone));
+        Optional<User> emailCheck = userRepository.findByEmail(email);
+
+        if(userInfo.isPresent() && phoneCheck.isEmpty() && emailCheck.isEmpty()){
+            User user = userInfo.get();
+            user.setFirstName(name);
+            user.setPhoneNumber(formatPhoneNumber(updatedPhone));
+            user.setEmail(email);
+
+            userRepository.save(user);
+            return user;
+        }
+
+        return null;
     }
 
 

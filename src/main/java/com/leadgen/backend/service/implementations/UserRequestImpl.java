@@ -16,6 +16,7 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -160,6 +161,65 @@ public class UserRequestImpl extends GenericServiceImpl<UserRequest,UserRequestD
 
         // Convert UserRequest entities to RequestDto objects
         return mapToRequestDtoList(userRequests);
+    }
+
+    @Override
+    public List<UserRequestDTO> getAllRequests() {
+        List<UserRequest> userRequests = this.userRequestRepository.findAll();
+        List<UserRequestDTO> dtos = new ArrayList<>();
+
+        for(UserRequest request : userRequests){
+            dtos.add(convertToDto(request));
+        }
+
+        return dtos;
+    }
+
+    private UserRequestDTO convertToDto(UserRequest request) {
+        return UserRequestDTO.builder()
+                .id(request.getId())
+                .request(request.getDescription())
+                .approvedBySystem(request.getApprovedBySystem())
+                .approvedByAdmin(request.getNeedsAdminApproval())
+                .price(Long.valueOf(request.getPrice()))
+                .category(convertToCategoryDto(request.getCategory()))
+                .bids(convertToBidDto(request.getBids()))
+                .user(request.getUser())
+                .build();
+    }
+
+    private List<CategoryDTO> convertToCategoryDto(Category category) {
+        List<CategoryDTO> categoryDTOS = new ArrayList<>();
+
+        if(category != null){
+            categoryDTOS.add(
+                    CategoryDTO.builder()
+                            .id(category.getId())
+                            .categoryName(category.getCategoryName())
+                            .backgroundColor(category.getBackgroundColor())
+                            .icons(category.getIcons())
+                            .build()
+            );
+
+            return categoryDTOS;
+        }
+        return categoryDTOS;
+    }
+
+    private List<BidDTO> convertToBidDto(List<Bid> bids) {
+        List<BidDTO> bidDTOS = new ArrayList<>();
+        for(Bid bid : bids){
+            BidDTO dto = BidDTO.builder()
+                    .id(bid.getId())
+                    .amount(bid.getAmount())
+                    .bidToUserId(bid.getBidToUserId())
+                    .bidFromUserId(bid.getBidFromUserId())
+                    .build();
+
+            bidDTOS.add(dto);
+        }
+
+        return bidDTOS;
     }
 
     private List<RequestDto> mapToRequestDtoList(List<UserRequest> userRequests) {

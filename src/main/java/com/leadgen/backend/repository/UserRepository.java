@@ -20,6 +20,7 @@ public interface UserRepository extends JpaRepository<User,Long> {
 
     @Query("SELECT u FROM User u WHERE u.status = :statusValue")
     List<User> findByStatus(@Param("statusValue") Boolean statusValue);
+    Optional<User> findByEmail(String email);
 
 
 

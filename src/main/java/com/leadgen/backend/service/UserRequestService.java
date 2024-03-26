@@ -2,6 +2,7 @@ package com.leadgen.backend.service;
 
 import com.leadgen.backend.Dto.RequestDto;
 import com.leadgen.backend.Dto.UserRequestDTO;
+import com.leadgen.backend.model.User;
 import com.leadgen.backend.model.UserRequest;
 
 import java.io.IOException;
@@ -12,4 +13,5 @@ public interface UserRequestService extends GenericService<UserRequestDTO> {
     List<RequestDto> getAllUserRequests(String phoneNumber);
 
     List<RequestDto> getSellerNotifications(String categoryName);
+    List<UserRequestDTO> getAllRequests();
 }
