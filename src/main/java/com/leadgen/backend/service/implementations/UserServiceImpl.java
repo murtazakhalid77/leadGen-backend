@@ -2,8 +2,11 @@ package com.leadgen.backend.service.implementations;
 
 import com.leadgen.backend.Dto.*;
 import com.leadgen.backend.configuration.OtpConfiguration;
+import com.leadgen.backend.enums.UserType;
+import com.leadgen.backend.model.Category;
 import com.leadgen.backend.model.Location;
 import com.leadgen.backend.model.User;
+import com.leadgen.backend.repository.CategoryRepository;
 import com.leadgen.backend.repository.UserRepository;
 import com.leadgen.backend.service.UserService;
 import lombok.AllArgsConstructor;
@@ -13,6 +16,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -27,6 +31,8 @@ public class UserServiceImpl extends GenericServiceImpl<User, UserDTO> implement
 
     @Autowired
     UserRepository userRepository;
+    @Autowired
+    CategoryRepository categoryRepository;
     @Autowired
     private BCryptPasswordEncoder bCryptPasswordEncoder;
     @Autowired
@@ -149,6 +155,29 @@ public class UserServiceImpl extends GenericServiceImpl<User, UserDTO> implement
             user.setEmail(email);
 
             userRepository.save(user);
+            return user;
+        }
+
+        return null;
+    }
+
+    @Override
+    public User setUserSellingCategory(String[] category, String phoneNumber) {
+        Optional<User> userInfo = userRepository.findByPhoneNumber(formatPhoneNumber(phoneNumber));
+
+        if(userInfo.isPresent()){
+            User user = userInfo.get();
+            List<Category> categoryList = user.getSellingCategory();
+            for(String cat : category){
+                Category category1 = categoryRepository.findByCategoryName(cat);
+                if(!user.getSellingCategory().contains(category1)){
+                    categoryList.add(category1);
+                }
+            }
+            user.setSellingCategory(categoryList);
+            user.setUserType(UserType.SELLER);
+            userRepository.save(user);
+
             return user;
         }
 

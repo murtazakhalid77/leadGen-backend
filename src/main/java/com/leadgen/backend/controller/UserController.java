@@ -121,5 +121,20 @@ public class UserController extends GenericController<UserDTO> {
         }
     }
 
+    @PutMapping("/{userPhone}")
+    public ResponseEntity<?> setUserCategory(@RequestBody String[] selectedCategory, @PathVariable String userPhone){
+        try {
+            User user = userService.setUserSellingCategory(selectedCategory, userPhone);
+            if(user != null){
+                return ResponseEntity.ok().build();
+            }
+            else {
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to set selling category. Please try again.");
+            }
+        } catch (Exception e) {
+            // Return the exception message in the response
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
+    }
 
 }

@@ -20,4 +20,5 @@ public interface UserService extends GenericService<UserDTO>{
     String forgotPassword(String number);
     User updatePassword(String number, String password);
     User updateUserInformation(String name, String updatedPhone, String email, String userPhone);
+    User setUserSellingCategory(String[] category, String phoneNumber);
 }
