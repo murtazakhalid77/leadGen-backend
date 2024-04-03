@@ -19,6 +19,7 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import static com.leadgen.backend.helpers.HelperClass.formatPhoneNumber;
@@ -167,7 +168,7 @@ public class UserServiceImpl extends GenericServiceImpl<User, UserDTO> implement
 
         if(userInfo.isPresent()){
             User user = userInfo.get();
-            List<Category> categoryList = user.getSellingCategory();
+            Set<Category> categoryList = user.getSellingCategory();
             for(String cat : category){
                 Category category1 = categoryRepository.findByCategoryName(cat);
                 if(!user.getSellingCategory().contains(category1)){
@@ -175,12 +176,26 @@ public class UserServiceImpl extends GenericServiceImpl<User, UserDTO> implement
                 }
             }
             user.setSellingCategory(categoryList);
-            user.setUserType(UserType.SELLER);
             userRepository.save(user);
 
             return user;
         }
 
+        return null;
+    }
+
+    @Override
+    public User setUserType(String userType, String phoneNumber) {
+        Optional<User> userInfo = userRepository.findByPhoneNumber(formatPhoneNumber(phoneNumber));
+
+        if(userInfo.isPresent()){
+            User user = userInfo.get();
+
+            UserType userTypeEnum = UserType.valueOf(userType.toUpperCase());
+            user.setUserType(userTypeEnum);
+            userRepository.save(user);
+            return user;
+        }
         return null;
     }
 

@@ -3,6 +3,7 @@ package com.leadgen.backend.service;
 import com.leadgen.backend.Dto.RegisterDto;
 import com.leadgen.backend.Dto.UserDTO;
 import com.leadgen.backend.Dto.UserTypeDto;
+import com.leadgen.backend.enums.UserType;
 import com.leadgen.backend.model.User;
 
 import java.util.List;
@@ -21,4 +22,6 @@ public interface UserService extends GenericService<UserDTO>{
     User updatePassword(String number, String password);
     User updateUserInformation(String name, String updatedPhone, String email, String userPhone);
     User setUserSellingCategory(String[] category, String phoneNumber);
+
+    User setUserType(String userType, String phoneNumber);
 }

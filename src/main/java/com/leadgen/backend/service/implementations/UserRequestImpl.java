@@ -127,24 +127,25 @@ public class UserRequestImpl extends GenericServiceImpl<UserRequest,UserRequestD
         return mapToRequestDtoList(userRequests);
     }
 
-    @Override
     public List<RequestDto> getSellerNotifications(String categoryName) {
-        LocalDateTime startOfToday = LocalDate.now().atStartOfDay();
-        LocalDateTime startOfYesterday = LocalDate.now().minusDays(1).atStartOfDay();
+        LocalDate today = LocalDate.now();
+        LocalDate yesterday = LocalDate.now().minusDays(1);
 
-        // Convert LocalDateTime to Instant and then to Timestamp
-        Instant startTodayInstant = startOfToday.atZone(ZoneId.systemDefault()).toInstant();
-        Instant startYesterdayInstant = startOfYesterday.atZone(ZoneId.systemDefault()).toInstant();
+        // Retrieve the category object by its name
+        Category category = categoryRepository.findByCategoryName(categoryName);
 
-        Timestamp startTodayTimestamp = Timestamp.from(startTodayInstant);
-        Timestamp startYesterdayTimestamp = Timestamp.from(startYesterdayInstant);
+        // If the category is not found, return an empty list
+        if (category == null) {
+            return Collections.emptyList();
+        }
 
         List<UserRequest> userRequests;
         try {
-
-            Category category = categoryRepository.findByCategoryName(categoryName);
             // Retrieve user requests from the repository
-            userRequests = userRequestRepository.findByCategoryAndApprovedBySystemTrueAndNotifiableTrueAndNotifiedNumberGreaterThanAndCreatedDtBetweenOrderByCreatedDtDesc(category,0L, startYesterdayTimestamp, startTodayTimestamp);
+            userRequests = userRequestRepository.findByCategoryAndApprovedBySystemTrueAndNotifiableTrueAndNotifiedNumberGreaterThanOrderByCreatedDtDesc(
+                    category, // Category object
+                    0L // notifiedNumber greater than 0
+            );
         } catch (Exception e) {
             // Handle any exceptions that occur during data retrieval
             e.printStackTrace();
@@ -152,15 +153,16 @@ public class UserRequestImpl extends GenericServiceImpl<UserRequest,UserRequestD
             return Collections.emptyList(); // Return an empty list indicating no data found
         }
 
-        // Check if no data is found
-        if (userRequests == null || userRequests.isEmpty()) {
-            // Handle the case where no data is found
-            System.out.println("No user requests found");
-            return Collections.emptyList(); // Return an empty list indicating no data found
-        }
+        // Filter user requests based on the modified date
+        List<UserRequest> filteredUserRequests = userRequests.stream()
+                .filter(userRequest -> {
+                    LocalDate requestDate = userRequest.getCreatedDt().toLocalDateTime().toLocalDate();
+                    return requestDate.equals(today) || requestDate.equals(yesterday);
+                })
+                .collect(Collectors.toList());
 
         // Convert UserRequest entities to RequestDto objects
-        return mapToRequestDtoList(userRequests);
+        return mapToRequestDtoList(filteredUserRequests);
     }
 
     @Override

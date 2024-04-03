@@ -1,6 +1,7 @@
 package com.leadgen.backend.controller;
 
 import com.leadgen.backend.Dto.*;
+import com.leadgen.backend.enums.UserType;
 import com.leadgen.backend.model.User;
 import com.leadgen.backend.service.TestServiceInterface;
 import com.leadgen.backend.service.UserService;
@@ -136,5 +137,21 @@ public class UserController extends GenericController<UserDTO> {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
     }
+    @PostMapping("/setUserType/{phoneNumber}/{userTypeString}")
+    public ResponseEntity<Boolean> setUserType(@PathVariable String phoneNumber, @PathVariable String userTypeString) {
+        // Extract the userType from UserTypeDto
+//        UserType userType1 = userType;
 
+        User user = userService.setUserType(userTypeString, phoneNumber);
+
+        if(user!=null){
+            boolean setUserTypeSuccess = true;
+            if (setUserTypeSuccess) {
+                return ResponseEntity.ok(true);
+            } else {
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(false);
+            }
+        }
+        return ResponseEntity.ok(false);
+    }
 }

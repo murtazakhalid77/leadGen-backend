@@ -44,9 +44,12 @@ public class User extends Auditable {
     @Enumerated(EnumType.STRING)
     private UserType userType;
 
-    @OneToMany
-    @JoinColumn(name= "user_id")
-    private List<Category> sellingCategory;
+
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(name = "user_category",
+            joinColumns = @JoinColumn(name = "user_id") ,
+            inverseJoinColumns = @JoinColumn(name = "category_id"))
+    private Set<Category> sellingCategory = new HashSet<>();
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     List<UserRequest> userRequests;
