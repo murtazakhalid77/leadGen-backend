@@ -47,6 +47,18 @@ public class HelperClass {
         return formattedNumber;
     }
 
+    public static String formattedPhoneNumberFromDatabase(String phoneNumber) {
+        // Remove spaces from the phone number
+        String formattedNumber = phoneNumber.replaceAll("\\s+", "");
+
+        // If the number starts with "0", replace "0" with "92"
+        if (formattedNumber.startsWith("92")) {
+            formattedNumber = "0" + formattedNumber.substring(2);
+        }
+
+        return formattedNumber;
+    }
+
 
     public static Map<String, Object> checkProfanity(String text) throws IOException {
             HttpClient httpClient = HttpClients.createDefault();
