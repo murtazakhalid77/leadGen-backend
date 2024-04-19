@@ -142,7 +142,7 @@ public class UserRequestImpl extends GenericServiceImpl<UserRequest,UserRequestD
         List<UserRequest> userRequests;
         try {
             // Retrieve user requests from the repository
-            userRequests = userRequestRepository.findByCategoryAndApprovedBySystemTrueAndNotifiableTrueAndNotifiedNumberGreaterThanOrderByCreatedDtDesc(
+            userRequests = userRequestRepository.findByCategoryAndApprovedBySystemTrueAndNotifiedNumberGreaterThanOrderByCreatedDtDesc(
                     category, // Category object
                     0L // notifiedNumber greater than 0
             );
