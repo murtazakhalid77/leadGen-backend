@@ -43,7 +43,7 @@ public class UserRequestImpl extends GenericServiceImpl<UserRequest,UserRequestD
     @Override
     public UserRequest saveUserRequest(RequestDto requestDto) throws IOException {
         Category category = categoryRepository.findByCategoryName(requestDto.getCategoryy().getCategoryName());
-        User user = userRepository.findByPhoneNumber(formatPhoneNumber(requestDto.getNumber())).orElse(null);
+        User user = userRepository.findByPhoneNumber(requestDto.getEmail()).orElse(null);
 
         if (category != null && user != null) {
             Map<String, Object> profanityResult = checkProfanity(requestDto.getDescription());
@@ -121,9 +121,9 @@ public class UserRequestImpl extends GenericServiceImpl<UserRequest,UserRequestD
     }
 
     @Override
-    public List<RequestDto> getAllUserRequests(String phoneNumber) {
-        String phoneNumber1=formatPhoneNumber(phoneNumber);
-        List<UserRequest> userRequests = userRequestRepository.findByUserPhoneNumberOrderByCreatedDtDesc(phoneNumber1);
+    public List<RequestDto> getAllUserRequests(String email) {
+
+        List<UserRequest> userRequests = userRequestRepository.findByUserEmailOrderByCreatedDtDesc(email);
         return mapToRequestDtoList(userRequests);
     }
 
@@ -252,7 +252,7 @@ public class UserRequestImpl extends GenericServiceImpl<UserRequest,UserRequestD
                 .categoryy(categoryDTO)
                 .user(UserDto)
                 .locationModel(userRequest.getLocation())
-                .number(userRequest.getUser().getPhoneNumber())
+                .email(userRequest.getUser().getEmail())
                 .price(userRequest.getPrice())
                 .build();
     }

@@ -66,8 +66,8 @@ public class UserServiceImpl extends GenericServiceImpl<User, UserDTO> implement
     }
 
     @Override
-    public UserHomeDto getLoggedInUser(String phoneNumber) {
-        Optional<User> userByPhoneNumber = userRepository.findByPhoneNumber(formatPhoneNumber(phoneNumber));
+    public UserHomeDto getLoggedInUser(String email) {
+        Optional<User> userByPhoneNumber = userRepository.findByEmail(email);
 
         if (userByPhoneNumber.isPresent()) {
             User user = userByPhoneNumber.get();
@@ -85,8 +85,8 @@ public class UserServiceImpl extends GenericServiceImpl<User, UserDTO> implement
     }
 
     @Override
-    public UserTypeDto getUserType(String phoneNumber) {
-        Optional<User> userDetail = userRepository.findByPhoneNumber(formatPhoneNumber(phoneNumber));
+    public UserTypeDto getUserType(String email) {
+        Optional<User> userDetail = userRepository.findByEmail(email);
 
         if(userDetail.isPresent()){
             User user = userDetail.get();

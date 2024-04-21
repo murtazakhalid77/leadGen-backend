@@ -14,9 +14,9 @@ public interface UserService extends GenericService<UserDTO>{
     Boolean registerUser(RegisterDto registerDto);
 
     List<User> finduserByStatus(Boolean status);
-    UserHomeDto getLoggedInUser(String phoneNumber);
+    UserHomeDto getLoggedInUser(String email);
 
-    UserTypeDto getUserType(String phoneNumber) ;
+    UserTypeDto getUserType(String email) ;
 
     String forgotPassword(String number);
     User updatePassword(String number, String password);

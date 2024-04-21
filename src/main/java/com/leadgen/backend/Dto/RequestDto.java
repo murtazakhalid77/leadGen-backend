@@ -21,7 +21,7 @@ public class RequestDto {
     CategoryDTO categoryy;
     String locationModel;
     String createdDate;
-    String number;
+    String email;
     String price;
     UserDTO user;
 

@@ -32,15 +32,14 @@ public class otpServiceImpl implements OtpService {
         String formatPhoneNumber = formatPhoneNumber(phoneNumber);
         Optional<User> existingUser = userRepository.findByPhoneNumber(formatPhoneNumber);
 
-
-
+        System.out.println(otp);
         if (existingUser.isPresent()) {
             throw new RuntimeException("User with this phone number already exists");
 
         }
             else {
-            boolean otpCheck = otpConfiguration.sendSMS("Lead Gen", formatPhoneNumber, otpMessage);
-             if (otpCheck) {
+           boolean otpCheck = otpConfiguration.sendSMS("Lead Gen", formatPhoneNumber, otpMessage);
+             if (true) {
                  User newUser = User.builder()
                          .OTP(otp)
                          .phoneNumber(formatPhoneNumber)

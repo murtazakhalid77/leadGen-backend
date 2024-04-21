@@ -12,7 +12,7 @@ import lombok.*;
 
 public class LoginCredentials {
 
-    private String phoneNumber;
+    private String email;
     private String password;
 
 

@@ -42,10 +42,10 @@ public class UserController extends GenericController<UserDTO> {
         }
     }
 
-    @GetMapping("/getLoggedInUser/{phoneNumber}")
-    public ResponseEntity<?> registerUser(@PathVariable String phoneNumber) {
+    @GetMapping("/getLoggedInUser/{email}")
+    public ResponseEntity<?> registerUser(@PathVariable String email) {
         try {
-            UserHomeDto userHomeDto = userService.getLoggedInUser(phoneNumber);
+            UserHomeDto userHomeDto = userService.getLoggedInUser(email);
             return ResponseEntity.ok().body(userHomeDto);
         } catch (Exception e) {
             // Log the exception for debugging purposes
@@ -73,10 +73,10 @@ public class UserController extends GenericController<UserDTO> {
         }
     }
 
-    @GetMapping("/getUserType/{phoneNumber}")
-    public ResponseEntity<?> getUserTypeByPhoneNumber(@PathVariable String phoneNumber){
+    @GetMapping("/getUserType/{email}")
+    public ResponseEntity<?> getUserTypeByPhoneNumber(@PathVariable String email){
         try {
-            UserTypeDto user = userService.getUserType(phoneNumber);
+            UserTypeDto user = userService.getUserType(email);
             if(user != null){
                 return ResponseEntity.ok(user);
             }
