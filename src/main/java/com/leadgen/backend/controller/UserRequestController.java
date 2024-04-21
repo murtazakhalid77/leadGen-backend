@@ -40,9 +40,9 @@ public class UserRequestController extends GenericController<UserRequestDTO> {
     }
 
 
-    @GetMapping("/getAllUserRequests/{phoneNumber}")
-    public ResponseEntity<List<RequestDto>> getAllUserRequests(@PathVariable("phoneNumber") String phoneNumber) {
-        List<RequestDto> userRequests = userRequestService.getAllUserRequests(phoneNumber);
+    @GetMapping("/getAllUserRequests/{email}")
+    public ResponseEntity<List<RequestDto>> getAllUserRequests(@PathVariable("email") String email) {
+        List<RequestDto> userRequests = userRequestService.getAllUserRequests(email);
         return new ResponseEntity<>(userRequests, HttpStatus.OK);
     }
 
