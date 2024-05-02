@@ -16,10 +16,7 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -175,6 +172,22 @@ public class UserRequestImpl extends GenericServiceImpl<UserRequest,UserRequestD
         }
 
         return dtos;
+    }
+
+    @Override
+    public UserRequest setAdminApprovalOfRequest(Long id) {
+        Optional<UserRequest> userRequest = this.userRequestRepository.findById(id);
+
+        if(userRequest.isPresent()){
+            UserRequest request = userRequest.get();
+
+            request.setNeedsAdminApproval(true);
+//            request.setApprovedBySystem(true);
+            this.userRequestRepository.save(request);
+            return request;
+        }
+
+        return null;
     }
 
     private UserRequestDTO convertToDto(UserRequest request) {

@@ -3,6 +3,7 @@ package com.leadgen.backend.controller;
 import com.leadgen.backend.Dto.RequestDto;
 import com.leadgen.backend.Dto.TestDTO;
 import com.leadgen.backend.Dto.UserRequestDTO;
+import com.leadgen.backend.Dto.UserTypeDto;
 import com.leadgen.backend.model.UserRequest;
 import com.leadgen.backend.repository.UserRequestRepository;
 import com.leadgen.backend.service.TestServiceInterface;
@@ -56,6 +57,22 @@ public class UserRequestController extends GenericController<UserRequestDTO> {
     public ResponseEntity<?> getAllRequests(){
         List<UserRequestDTO> requestDTOS = this.userRequestService.getAllRequests();
         return new ResponseEntity<List<UserRequestDTO>>(requestDTOS, HttpStatus.OK);
+    }
+
+    @PutMapping("/setApproval/{requestId}")
+    public ResponseEntity<?> setRequestAdminApproval(@PathVariable Long requestId){
+        try {
+            UserRequest userRequest = this.userRequestService.setAdminApprovalOfRequest(requestId);
+            if(userRequest != null){
+                return ResponseEntity.ok(userRequest);
+            }
+            else {
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to get user request. Please try again.");
+            }
+        } catch (Exception e) {
+            // Return the exception message in the response
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
     }
 
 }

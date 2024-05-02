@@ -203,13 +203,22 @@ public class UserServiceImpl extends GenericServiceImpl<User, UserDTO> implement
     public User setUserType(String userType, String phoneNumber) {
         Optional<User> userInfo = userRepository.findByPhoneNumber(formatPhoneNumber(phoneNumber));
 
+
         if(userInfo.isPresent()){
             User user = userInfo.get();
-
+            UserType type = user.getUserType();
             UserType userTypeEnum = UserType.valueOf(userType.toUpperCase());
-            user.setUserType(userTypeEnum);
-            userRepository.save(user);
-            return user;
+
+            if(type == null){
+                user.setUserType(userTypeEnum);
+                userRepository.save(user);
+                return user;
+            }else if(userTypeEnum != user.getUserType()) {
+                user.setUserType(UserType.BOTH);
+                userRepository.save(user);
+                return user;
+            }
+
         }
         return null;
     }
