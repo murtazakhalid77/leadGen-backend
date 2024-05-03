@@ -43,7 +43,7 @@ public class UserRequestImpl extends GenericServiceImpl<UserRequest,UserRequestD
     @Override
     public UserRequest saveUserRequest(RequestDto requestDto) throws IOException {
         Category category = categoryRepository.findByCategoryName(requestDto.getCategoryy().getCategoryName());
-        User user = userRepository.findByPhoneNumber(requestDto.getEmail()).orElse(null);
+        User user = userRepository.findByEmail(requestDto.getEmail()).orElse(null);
 
         if (category != null && user != null) {
             Map<String, Object> profanityResult = checkProfanity(requestDto.getDescription());

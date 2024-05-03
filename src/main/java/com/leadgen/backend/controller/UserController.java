@@ -56,7 +56,6 @@ public class UserController extends GenericController<UserDTO> {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorMessage);
         }
     }
-
     @GetMapping("/get-status/{status}")
     public ResponseEntity<?> getUserByStatus(@PathVariable Boolean status){
         try {
@@ -122,10 +121,10 @@ public class UserController extends GenericController<UserDTO> {
         }
     }
 
-    @PutMapping("/{userPhone}")
-    public ResponseEntity<?> setUserCategory(@RequestBody String[] selectedCategory, @PathVariable String userPhone){
+    @PutMapping("/{email}")
+    public ResponseEntity<?> setUserCategory(@RequestBody String[] selectedCategory, @PathVariable String email){
         try {
-            User user = userService.setUserSellingCategory(selectedCategory, userPhone);
+            User user = userService.setUserSellingCategory(selectedCategory, email);
             if(user != null){
                 return ResponseEntity.ok().build();
             }
@@ -137,12 +136,12 @@ public class UserController extends GenericController<UserDTO> {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
     }
-    @PostMapping("/setUserType/{phoneNumber}/{userTypeString}")
-    public ResponseEntity<Boolean> setUserType(@PathVariable String phoneNumber, @PathVariable String userTypeString) {
+    @PostMapping("/setUserType/{email}/{userTypeString}")
+    public ResponseEntity<Boolean> setUserType(@PathVariable String email, @PathVariable String userTypeString) {
         // Extract the userType from UserTypeDto
 //        UserType userType1 = userType;
 
-        User user = userService.setUserType(userTypeString, phoneNumber);
+        User user = userService.setUserType(userTypeString, email);
 
         if(user!=null){
             boolean setUserTypeSuccess = true;

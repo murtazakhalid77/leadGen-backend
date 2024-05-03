@@ -39,7 +39,7 @@ public class otpServiceImpl implements OtpService {
         }
             else {
            boolean otpCheck = otpConfiguration.sendSMS("Lead Gen", formatPhoneNumber, otpMessage);
-             if (true) {
+             if (otpCheck) {
                  User newUser = User.builder()
                          .OTP(otp)
                          .phoneNumber(formatPhoneNumber)

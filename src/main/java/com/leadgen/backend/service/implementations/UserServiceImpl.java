@@ -76,6 +76,7 @@ public class UserServiceImpl extends GenericServiceImpl<User, UserDTO> implement
                 return UserHomeDto.builder()
                         .firstName(user.getFirstName())
                         .email(user.getEmail())
+                        .phoneNumber(user.getPhoneNumber())
                         .build();
 
 
@@ -178,8 +179,8 @@ public class UserServiceImpl extends GenericServiceImpl<User, UserDTO> implement
     }
 
     @Override
-    public User setUserSellingCategory(String[] category, String phoneNumber) {
-        Optional<User> userInfo = userRepository.findByPhoneNumber(formatPhoneNumber(phoneNumber));
+    public User setUserSellingCategory(String[] category, String email) {
+        Optional<User> userInfo = userRepository.findByEmail(email);
 
         if(userInfo.isPresent()){
             User user = userInfo.get();
@@ -200,8 +201,8 @@ public class UserServiceImpl extends GenericServiceImpl<User, UserDTO> implement
     }
 
     @Override
-    public User setUserType(String userType, String phoneNumber) {
-        Optional<User> userInfo = userRepository.findByPhoneNumber(formatPhoneNumber(phoneNumber));
+    public User setUserType(String userType, String email) {
+        Optional<User> userInfo = userRepository.findByEmail(email);
 
         if(userInfo.isPresent()){
             User user = userInfo.get();
