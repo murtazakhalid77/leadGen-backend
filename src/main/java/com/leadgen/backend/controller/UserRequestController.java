@@ -75,4 +75,20 @@ public class UserRequestController extends GenericController<UserRequestDTO> {
         }
     }
 
+    @PutMapping("/cancelRequest/{requestId}")
+    public ResponseEntity<?> cancelSellerRequest(@PathVariable Long requestId){
+        try {
+            UserRequest userRequest = this.userRequestService.cancelSellerRequest(requestId);
+            if(userRequest != null){
+                return ResponseEntity.ok(userRequest);
+            }
+            else {
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to get user request. Please try again.");
+            }
+        } catch (Exception e) {
+            // Return the exception message in the response
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
+    }
+
 }

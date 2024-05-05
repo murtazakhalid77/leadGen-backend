@@ -16,6 +16,7 @@ import java.util.List;
 @Data
 public class RequestDto {
 
+    Long id;
     String title;
     String description;
     CategoryDTO categoryy;

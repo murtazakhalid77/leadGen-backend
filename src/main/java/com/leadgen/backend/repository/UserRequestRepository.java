@@ -17,7 +17,7 @@ public interface UserRequestRepository extends JpaRepository<UserRequest,Long> {
     List<UserRequest> findUserRequestByApprovedBySystemOrNeedsAdminApproval(Boolean approvedBySystem,Boolean needsAdminApproval);
 
     List<UserRequest> findUserRequestsByCategory(Category category);
-    @Query("SELECT ur FROM UserRequest ur WHERE ur.category = :category AND ur.notifiedNumber < 3 AND ur.notifiable = true")
+    @Query("SELECT ur FROM UserRequest ur WHERE ur.category = :category AND ur.notifiedNumber < 3 AND ur.notifiable = true AND ur.status = true")
     List<UserRequest> findUserRequestsToNotify(@Param("category") Category category);
 
     List<UserRequest> findByUserEmailOrderByCreatedDtDesc(String email);

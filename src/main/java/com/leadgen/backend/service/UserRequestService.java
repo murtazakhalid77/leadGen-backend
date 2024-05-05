@@ -15,5 +15,6 @@ public interface UserRequestService extends GenericService<UserRequestDTO> {
     List<RequestDto> getSellerNotifications(String categoryName);
     List<UserRequestDTO> getAllRequests();
     UserRequest setAdminApprovalOfRequest(Long id);
+    UserRequest cancelSellerRequest(Long id);
 
 }

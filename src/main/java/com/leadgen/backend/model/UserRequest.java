@@ -26,6 +26,7 @@ public class UserRequest extends Auditable {
     String price;
     Long notifiedNumber;
     Boolean notifiable;
+    Boolean status;
 
     private String location;
 
@@ -44,4 +45,5 @@ public class UserRequest extends Auditable {
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "user_id")
     User user;
+
 }

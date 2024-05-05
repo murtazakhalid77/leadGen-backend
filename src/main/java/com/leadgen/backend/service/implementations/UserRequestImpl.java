@@ -78,6 +78,7 @@ public class UserRequestImpl extends GenericServiceImpl<UserRequest,UserRequestD
                         .notifiedNumber(0L)
                         .notifiable(Boolean.TRUE)
                         .approvedBySystem(true)
+                        .status(true)
                         .build();
             } else if (isNeutralSentiment && !hasProfanity) {
                 // Neutral sentiment with no profanity, needs further analysis or default action
@@ -91,7 +92,8 @@ public class UserRequestImpl extends GenericServiceImpl<UserRequest,UserRequestD
                         .user(user)
                         .notifiedNumber(0L)
                         .notifiable(Boolean.TRUE)
-                        .approvedBySystem(true) // Needs further analysis or default action
+                        .approvedBySystem(true)
+                        .status(true)// Needs further analysis or default action
                         .build();
             } else {
                 // Negative sentiment or has profanity
@@ -106,6 +108,7 @@ public class UserRequestImpl extends GenericServiceImpl<UserRequest,UserRequestD
                         .notifiable(Boolean.TRUE)
                         .user(user)
                         .approvedBySystem(false )
+                        .status(false)
                         .build();
             }
 
@@ -121,7 +124,14 @@ public class UserRequestImpl extends GenericServiceImpl<UserRequest,UserRequestD
     public List<RequestDto> getAllUserRequests(String email) {
 
         List<UserRequest> userRequests = userRequestRepository.findByUserEmailOrderByCreatedDtDesc(email);
-        return mapToRequestDtoList(userRequests);
+        List<UserRequest> savedUserRequest = new ArrayList<>();
+
+        for(UserRequest request : userRequests){
+            if(request.getStatus() != null && request.getStatus()){
+                savedUserRequest.add(request);
+            }
+        }
+        return mapToRequestDtoList(savedUserRequest);
     }
 
     public List<RequestDto> getSellerNotifications(String categoryName) {
@@ -187,6 +197,20 @@ public class UserRequestImpl extends GenericServiceImpl<UserRequest,UserRequestD
             return request;
         }
 
+        return null;
+    }
+
+    @Override
+    public UserRequest cancelSellerRequest(Long id) {
+        Optional<UserRequest> userRequest = this.userRequestRepository.findById(id);
+
+        if(userRequest.isPresent()){
+            UserRequest request = userRequest.get();
+
+            request.setStatus(false);
+            this.userRequestRepository.save(request);
+            return request;
+        }
         return null;
     }
 
@@ -259,6 +283,7 @@ public class UserRequestImpl extends GenericServiceImpl<UserRequest,UserRequestD
 
         UserDTO UserDto = mapToUserDto(userRequest.getUser());
         return RequestDto.builder()
+                .id(userRequest.getId())
                 .description(userRequest.getDescription())
                 .createdDate(String.valueOf(userRequest.getCreatedDt()))
                 .title(userRequest.getTitle())
