@@ -27,6 +27,7 @@ public class UserRequest extends Auditable {
     Long notifiedNumber;
     Boolean notifiable;
     Boolean status;
+    Boolean accepted;
 
     private String location;
 

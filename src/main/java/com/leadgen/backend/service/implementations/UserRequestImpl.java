@@ -214,6 +214,19 @@ public class UserRequestImpl extends GenericServiceImpl<UserRequest,UserRequestD
         return null;
     }
 
+    @Override
+    public UserRequest accept(Long id) {
+        Optional<UserRequest> userRequest = this.userRequestRepository.findById(id);
+
+        if(userRequest.isPresent()){
+            UserRequest request = userRequest.get();
+
+            request.setStatus(true);
+            this.userRequestRepository.save(request);
+            return request;
+        }
+        return null;
+    }
     private UserRequestDTO convertToDto(UserRequest request) {
         return UserRequestDTO.builder()
                 .id(request.getId())
@@ -289,6 +302,7 @@ public class UserRequestImpl extends GenericServiceImpl<UserRequest,UserRequestD
                 .title(userRequest.getTitle())
                 .categoryy(categoryDTO)
                 .user(UserDto)
+                .accepted(userRequest.getAccepted().toString())
                 .locationModel(userRequest.getLocation())
                 .email(userRequest.getUser().getEmail())
                 .price(userRequest.getPrice())

@@ -91,4 +91,20 @@ public class UserRequestController extends GenericController<UserRequestDTO> {
         }
     }
 
+    @PutMapping("/accept/{requestId}")
+    public ResponseEntity<?> accept(@PathVariable Long requestId){
+        try {
+            UserRequest userRequest = this.userRequestService.accept(requestId);
+            if(userRequest != null){
+                return ResponseEntity.ok(userRequest);
+            }
+            else {
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to get user request. Please try again.");
+            }
+        } catch (Exception e) {
+            // Return the exception message in the response
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
+    }
+
 }

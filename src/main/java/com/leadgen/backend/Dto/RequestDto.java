@@ -25,6 +25,7 @@ public class RequestDto {
     String email;
     String price;
     UserDTO user;
+    String accepted;
 
 }
 

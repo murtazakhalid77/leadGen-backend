@@ -16,5 +16,6 @@ public interface UserRequestService extends GenericService<UserRequestDTO> {
     List<UserRequestDTO> getAllRequests();
     UserRequest setAdminApprovalOfRequest(Long id);
     UserRequest cancelSellerRequest(Long id);
+    UserRequest accept(Long id);
 
 }
