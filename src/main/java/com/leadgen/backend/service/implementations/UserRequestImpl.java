@@ -11,14 +11,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
-import java.sql.Timestamp;
-import java.time.Instant;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.util.*;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import static com.leadgen.backend.helpers.HelperClass.*;
 
@@ -79,6 +74,8 @@ public class UserRequestImpl extends GenericServiceImpl<UserRequest,UserRequestD
                         .notifiable(Boolean.TRUE)
                         .approvedBySystem(true)
                         .status(true)
+                        .acceptedAmount(0L)
+                        .accepted(false)
                         .build();
             } else if (isNeutralSentiment && !hasProfanity) {
                 // Neutral sentiment with no profanity, needs further analysis or default action
@@ -93,7 +90,9 @@ public class UserRequestImpl extends GenericServiceImpl<UserRequest,UserRequestD
                         .notifiedNumber(0L)
                         .notifiable(Boolean.TRUE)
                         .approvedBySystem(true)
+                        .acceptedAmount(0L)
                         .status(true)// Needs further analysis or default action
+                        .accepted(false)
                         .build();
             } else {
                 // Negative sentiment or has profanity
@@ -107,8 +106,10 @@ public class UserRequestImpl extends GenericServiceImpl<UserRequest,UserRequestD
                         .notifiedNumber(0L)
                         .notifiable(Boolean.TRUE)
                         .user(user)
+                        .acceptedAmount(0L)
                         .approvedBySystem(false )
                         .status(false)
+                                .accepted(false)
                         .build();
             }
 
@@ -215,15 +216,17 @@ public class UserRequestImpl extends GenericServiceImpl<UserRequest,UserRequestD
     }
 
     @Override
-    public UserRequest accept(Long id) {
+    public Boolean accept(Long id, String emailOFAcceptedSellerBid, Long acceptedAmount) {
         Optional<UserRequest> userRequest = this.userRequestRepository.findById(id);
-
+        Optional<User> accptedUser = this.userRepository.findByEmail(emailOFAcceptedSellerBid);
         if(userRequest.isPresent()){
             UserRequest request = userRequest.get();
 
-            request.setStatus(true);
+            request.setAcceptedAmount(acceptedAmount);
+            request.setAccepted(true);
+            request.setAcceptedSeller(accptedUser.get());
             this.userRequestRepository.save(request);
-            return request;
+                return true;
         }
         return null;
     }
@@ -293,7 +296,7 @@ public class UserRequestImpl extends GenericServiceImpl<UserRequest,UserRequestD
 
     private RequestDto mapToRequestDto(UserRequest userRequest) {
         CategoryDTO categoryDTO = mapToCategoryDTO(userRequest.getCategory());
-
+        UserDTO userDTO = userRequest.getAcceptedSeller() == null ? null : mapToUserDto(userRequest.getAcceptedSeller());
         UserDTO UserDto = mapToUserDto(userRequest.getUser());
         return RequestDto.builder()
                 .id(userRequest.getId())
@@ -302,6 +305,8 @@ public class UserRequestImpl extends GenericServiceImpl<UserRequest,UserRequestD
                 .title(userRequest.getTitle())
                 .categoryy(categoryDTO)
                 .user(UserDto)
+                .acceptedAmount(userRequest.getAcceptedAmount())
+                .acceptedSeller(userDTO)
                 .accepted(userRequest.getAccepted().toString())
                 .locationModel(userRequest.getLocation())
                 .email(userRequest.getUser().getEmail())
@@ -317,6 +322,7 @@ public class UserRequestImpl extends GenericServiceImpl<UserRequest,UserRequestD
                 .firstName(user.getFirstName())
                 .lastName(user.getLastName())
                 .OTP(user.getOTP())
+                .uid(user.getUid())
                 .otpFlag(user.getOtpFlag())
                 .userType(user.getUserType())
                 .id(user.getId()).build();

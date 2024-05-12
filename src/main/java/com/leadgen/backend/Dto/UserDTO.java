@@ -58,4 +58,5 @@ public class UserDTO {
     private List<Category> sellingCategory;
 
     private List<UserRequest> userRequests;
+    String uid;
 }

@@ -47,4 +47,10 @@ public class UserRequest extends Auditable {
     @JoinColumn(name = "user_id")
     User user;
 
+
+    @OneToOne
+    @JoinColumn(name = "accepted_seller")
+    User acceptedSeller;
+
+    Long acceptedAmount;
 }

@@ -52,7 +52,7 @@ public class UserRequestController extends GenericController<UserRequestDTO> {
         List<RequestDto> userRequests = userRequestService.getSellerNotifications(categoryName);
         return new ResponseEntity<List<RequestDto>>(userRequests, HttpStatus.OK);
     }
-
+//continue from here the work is done show accpeted bid amount on the caard
     @GetMapping("/getAllRequests")
     public ResponseEntity<?> getAllRequests(){
         List<UserRequestDTO> requestDTOS = this.userRequestService.getAllRequests();
@@ -91,20 +91,24 @@ public class UserRequestController extends GenericController<UserRequestDTO> {
         }
     }
 
-    @PutMapping("/accept/{requestId}")
-    public ResponseEntity<?> accept(@PathVariable Long requestId){
+    @PostMapping("/accept/{requestId}/{emailOFAcceptedUser}/{bidAmount}")
+    public ResponseEntity<?> accept(@PathVariable Long requestId, @PathVariable String emailOFAcceptedUser, @PathVariable String bidAmount) {
         try {
-            UserRequest userRequest = this.userRequestService.accept(requestId);
-            if(userRequest != null){
+            double bidAmountDouble = Double.parseDouble(bidAmount);
+            long bidAmountLong = (long) bidAmountDouble;
+
+            boolean userRequest = this.userRequestService.accept(requestId, emailOFAcceptedUser, bidAmountLong);
+
+            if (userRequest) {
                 return ResponseEntity.ok(userRequest);
+            } else {
+                return ResponseEntity.ok(false);
+
             }
-            else {
-                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to get user request. Please try again.");
-            }
-        } catch (Exception e) {
-            // Return the exception message in the response
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        } catch (NumberFormatException e) {
+           throw  new RuntimeException("some error occured");
         }
     }
+
 
 }

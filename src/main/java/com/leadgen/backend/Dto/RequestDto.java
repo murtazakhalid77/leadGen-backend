@@ -26,6 +26,8 @@ public class RequestDto {
     String price;
     UserDTO user;
     String accepted;
+    UserDTO acceptedSeller;
+    Long acceptedAmount;
 
 }
 
