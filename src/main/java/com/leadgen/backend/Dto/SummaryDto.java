@@ -9,13 +9,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-public class RegisterDto {
-    String firstName;
-    String lastName;
-    String cnic;
-    String email;
-    String phoneNumber;
-    String fcmToken;
-    String uid;
-
+public class SummaryDto {
+    Double overAllRating;
+    Double totalEarning;
+    Integer totalRequestServed;
 }
