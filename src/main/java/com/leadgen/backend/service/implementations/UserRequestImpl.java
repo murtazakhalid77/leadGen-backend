@@ -107,7 +107,7 @@ public class UserRequestImpl extends GenericServiceImpl<UserRequest,UserRequestD
                         .notifiable(Boolean.TRUE)
                         .user(user)
                         .acceptedAmount(0L)
-                        .approvedBySystem(false )
+                        .approvedBySystem(false)
                         .status(false)
                                 .accepted(false)
                         .build();
@@ -192,8 +192,8 @@ public class UserRequestImpl extends GenericServiceImpl<UserRequest,UserRequestD
         if(userRequest.isPresent()){
             UserRequest request = userRequest.get();
 
-            request.setNeedsAdminApproval(true);
-//            request.setApprovedBySystem(true);
+            request.setNeedsAdminApproval(false);
+            request.setApprovedBySystem(true);
             this.userRequestRepository.save(request);
             return request;
         }
