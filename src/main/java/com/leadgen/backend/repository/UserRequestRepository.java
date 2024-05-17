@@ -11,12 +11,14 @@ import org.springframework.stereotype.Repository;
 import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface UserRequestRepository extends JpaRepository<UserRequest,Long> {
     List<UserRequest> findUserRequestByApprovedBySystemOrNeedsAdminApproval(Boolean approvedBySystem,Boolean needsAdminApproval);
 
     List<UserRequest> findUserRequestsByCategory(Category category);
+   Optional <List<UserRequest>> findUserRequestByAcceptedSeller(User user);
     @Query("SELECT ur FROM UserRequest ur WHERE ur.category = :category AND ur.notifiedNumber < 3 AND ur.notifiable = true AND ur.status = true")
     List<UserRequest> findUserRequestsToNotify(@Param("category") Category category);
 

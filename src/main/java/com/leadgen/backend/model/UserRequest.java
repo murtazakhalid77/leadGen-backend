@@ -53,4 +53,5 @@ public class UserRequest extends Auditable {
     User acceptedSeller;
 
     Long acceptedAmount;
+
 }

@@ -58,6 +58,7 @@ public class UserServiceImpl extends GenericServiceImpl<User, UserDTO> implement
             user.setLastName(registerDto.getLastName());
             user.setNationalIdentificationNumber(registerDto.getCnic());
             user.setEmail(registerDto.getEmail());
+            user.setUid(registerDto.getUid());
             user.setDeviceId(registerDto.getFcmToken());
             userRepository.save(user);
 

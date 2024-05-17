@@ -6,4 +6,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface UserReviewsRepository extends JpaRepository<UserReviews,Long> {
+
 }
