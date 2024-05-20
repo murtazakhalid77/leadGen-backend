@@ -4,19 +4,16 @@ import com.leadgen.backend.Dto.*;
 import com.leadgen.backend.configuration.OtpConfiguration;
 import com.leadgen.backend.enums.UserType;
 import com.leadgen.backend.model.Category;
-import com.leadgen.backend.model.Location;
 import com.leadgen.backend.model.User;
 import com.leadgen.backend.repository.CategoryRepository;
 import com.leadgen.backend.repository.UserRepository;
 import com.leadgen.backend.service.UserService;
-import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -78,6 +75,9 @@ public class UserServiceImpl extends GenericServiceImpl<User, UserDTO> implement
                         .firstName(user.getFirstName())
                         .email(user.getEmail())
                         .phoneNumber(user.getPhoneNumber())
+                        .uid(user.getUid())
+                        .profilePicPath(user.getProfilePic())
+                        .categories(user.getSellingCategory().stream().map(p->p.getCategoryName()).collect(Collectors.toList()))
                         .build();
 
 
@@ -145,8 +145,8 @@ public class UserServiceImpl extends GenericServiceImpl<User, UserDTO> implement
     }
 
     @Override
-    public User updateUserInformation(String name, String updatedPhone, String email, String userPhone) {
-        Optional<User> userInfo = userRepository.findByPhoneNumber(formatPhoneNumber(userPhone));
+    public User updateUserInformation(String name, String updatedPhone, String email, String imagePath) {
+        Optional<User> userInfo = userRepository.findByEmail(email);
 
 
         if(userInfo.isPresent()){
@@ -155,6 +155,7 @@ public class UserServiceImpl extends GenericServiceImpl<User, UserDTO> implement
                     && !user.getEmail().equalsIgnoreCase(email)){
                 user.setFirstName(name);
                 user.setEmail(email);
+                user.setProfilePic(imagePath);
                 userRepository.save(user);
                 return user;
             }
@@ -162,6 +163,7 @@ public class UserServiceImpl extends GenericServiceImpl<User, UserDTO> implement
                     && !formattedPhoneNumberFromDatabase(user.getPhoneNumber()).equalsIgnoreCase(updatedPhone)){
                 user.setFirstName(name);
                 user.setPhoneNumber(formatPhoneNumber(updatedPhone));
+                user.setProfilePic(imagePath);
                 userRepository.save(user);
                 return user;
             }
@@ -170,6 +172,7 @@ public class UserServiceImpl extends GenericServiceImpl<User, UserDTO> implement
                 user.setFirstName(name);
                 user.setPhoneNumber(formatPhoneNumber(updatedPhone));
                 user.setEmail(email);
+                user.setProfilePic(imagePath);
                 userRepository.save(user);
                 return user;
             }

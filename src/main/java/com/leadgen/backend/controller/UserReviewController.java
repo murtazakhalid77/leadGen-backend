@@ -1,5 +1,6 @@
 package com.leadgen.backend.controller;
 
+import com.leadgen.backend.Dto.ReviewsDtoUser;
 import com.leadgen.backend.Dto.SummaryDto;
 import com.leadgen.backend.Dto.TestDTO;
 import com.leadgen.backend.Dto.UserReviewsDTO;
@@ -8,6 +9,8 @@ import com.leadgen.backend.service.UserReviewsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/userReviews/")
@@ -41,6 +44,23 @@ public class UserReviewController extends GenericController<UserReviewsDTO> {
         try {
 
             SummaryDto summaryDto = this.userReviewsService.getUserSummary(emailOFSeller);
+
+            if (summaryDto!=null) {
+                return ResponseEntity.ok(summaryDto);
+            } else {
+                return ResponseEntity.ok(null);
+
+            }
+        } catch (NumberFormatException e) {
+            throw  new RuntimeException("some error occured");
+        }
+    }
+
+    @GetMapping("reviews/{emailOFSeller}")
+    public ResponseEntity<List<ReviewsDtoUser>> getReviews(@PathVariable String emailOFSeller) {
+        try {
+
+            List<ReviewsDtoUser> summaryDto = this.userReviewsService.getUserReviews(emailOFSeller);
 
             if (summaryDto!=null) {
                 return ResponseEntity.ok(summaryDto);

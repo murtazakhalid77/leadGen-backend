@@ -10,6 +10,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.EntityNotFoundException;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.util.*;
@@ -57,7 +58,7 @@ public class UserRequestImpl extends GenericServiceImpl<UserRequest,UserRequestD
             }
 
             boolean isPositiveSentiment = sentiment != null && sentiment.contains("POSITIVE");
-            boolean isNeutralSentiment = sentiment != null && sentiment.contains("NEUTRAL");
+            boolean isNeutralSentiment = sentiment != null && sentiment.contains("NEUTRAL") || sentiment != null && sentiment.contains("WEAK")  ;
             boolean isNegativeSentiment = sentiment != null && sentiment.contains("NEGATIVE");
             UserRequest userRequest;
             if (isPositiveSentiment && !hasProfanity) {
@@ -150,7 +151,7 @@ public class UserRequestImpl extends GenericServiceImpl<UserRequest,UserRequestD
         List<UserRequest> userRequests;
         try {
             // Retrieve user requests from the repository
-            userRequests = userRequestRepository.findByCategoryAndApprovedBySystemTrueAndNotifiedNumberGreaterThanOrderByCreatedDtDesc(
+            userRequests = userRequestRepository.findByCategoryAndApprovedBySystemTrueAndNotifiedNumberGreaterThanEqualOrderByCreatedDtDesc(
                     category, // Category object
                     0L // notifiedNumber greater than 0
             );
@@ -216,20 +217,47 @@ public class UserRequestImpl extends GenericServiceImpl<UserRequest,UserRequestD
     }
 
     @Override
-    public Boolean accept(Long id, String emailOFAcceptedSellerBid, Long acceptedAmount) {
-        Optional<UserRequest> userRequest = this.userRequestRepository.findById(id);
-        Optional<User> accptedUser = this.userRepository.findByEmail(emailOFAcceptedSellerBid);
-        if(userRequest.isPresent()){
-            UserRequest request = userRequest.get();
+    public Boolean accept(Long id, String emailOfAcceptedSellerBid, Long acceptedAmount) {
+        try {
+            Optional<UserRequest> userRequestOpt = this.userRequestRepository.findById(id);
+            Optional<User> acceptedUserOpt = this.userRepository.findByEmail(emailOfAcceptedSellerBid);
 
-            request.setAcceptedAmount(acceptedAmount);
-            request.setAccepted(true);
-            request.setAcceptedSeller(accptedUser.get());
-            this.userRequestRepository.save(request);
-                return true;
+            if (!userRequestOpt.isPresent()) {
+                throw new EntityNotFoundException("UserRequest not found with id: " + id);
+            }
+
+            UserRequest userRequest = userRequestOpt.get();
+
+            if (userRequest.getAcceptedSeller() == null) {
+                if (acceptedUserOpt.isPresent()) {
+                    User acceptedUser = acceptedUserOpt.get();
+
+                    userRequest.setAcceptedAmount(acceptedAmount);
+                    userRequest.setAccepted(true);
+                    userRequest.setAcceptedSeller(acceptedUser);
+                    userRequest.setNotifiable(Boolean.FALSE);
+
+
+                    this.userRequestRepository.save(userRequest);
+
+                    return true;
+                } else {
+                    throw new EntityNotFoundException("User not found with email: " + emailOfAcceptedSellerBid);
+                }
+            } else {
+                throw new RuntimeException("Accepted seller already exists for this UserRequest");
+            }
+        } catch (RuntimeException e) {
+
+            System.err.println("Error: " + e.getMessage());
+            return false;
+        } catch (Exception e) {
+            // Log and handle generic exceptions
+            e.printStackTrace();
+            return false;
         }
-        return null;
     }
+
 
     private UserRequestDTO convertToDto(UserRequest request) {
         return UserRequestDTO.builder()

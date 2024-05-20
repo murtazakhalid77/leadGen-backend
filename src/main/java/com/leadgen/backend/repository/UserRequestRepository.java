@@ -24,11 +24,8 @@ public interface UserRequestRepository extends JpaRepository<UserRequest,Long> {
 
     List<UserRequest> findByUserEmailOrderByCreatedDtDesc(String email);
 
-    List<UserRequest> findByCategoryAndApprovedBySystemTrueAndNotifiedNumberGreaterThanOrderByCreatedDtDesc(
+    List<UserRequest> findByCategoryAndApprovedBySystemTrueAndNotifiedNumberGreaterThanEqualOrderByCreatedDtDesc(
             Category category, Long notifiedNumber);
-
-
-
 
 
 
