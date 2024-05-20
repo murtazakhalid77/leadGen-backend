@@ -1,5 +1,6 @@
 package com.leadgen.backend.service.implementations;
 
+import com.leadgen.backend.Dto.ReviewsDtoUser;
 import com.leadgen.backend.Dto.SummaryDto;
 import com.leadgen.backend.Dto.UserReviewsDTO;
 import com.leadgen.backend.model.User;
@@ -13,6 +14,8 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -77,6 +80,40 @@ public class UserReviewsServiceImpl extends GenericServiceImpl<UserReviews, User
                 .overAllRating(overallRating)
                 .build();
     }
+
+
+    @Override
+    public List<ReviewsDtoUser> getUserReviews(String emailOFSeller) {
+        Optional<User> seller = this.userRepository.findByEmail(emailOFSeller);
+        if (seller.isEmpty()) {
+            // Handle case where seller with the provided email is not found
+            return Collections.emptyList();
+        }
+
+        List<ReviewsDtoUser> reviewsDtoUsers = new ArrayList<>();
+
+        // Iterate through all the reviews associated with the seller
+        for (UserReviews review : seller.get().getReviews()) {
+            ReviewsDtoUser reviewsDtoUser = new ReviewsDtoUser();
+
+            // Set reviewer name (assuming reviewer name is stored in User entity)
+            reviewsDtoUser.setReviewerName(review.getUserRequest().getUser().getFirstName()+" "+review.getUserRequest().getUser().getLastName());
+
+            // Set note from the review
+            reviewsDtoUser.setNote(review.getNote());
+
+            // Set rating from the review
+            reviewsDtoUser.setRating(review.getRating().doubleValue());
+
+            // Add the constructed ReviewsDtoUser object to the list
+            reviewsDtoUsers.add(reviewsDtoUser);
+        }
+
+        return reviewsDtoUsers;
+    }
+
+
+
     private double calculateOverallRating(double averageRating) {
         // Example custom formula: 80% weight to average rating and 20% weight to some fixed value (e.g., 5.0)
         double weightedAverageRating = 0.8 * averageRating;

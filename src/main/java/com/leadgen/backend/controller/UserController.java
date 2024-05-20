@@ -104,11 +104,11 @@ public class UserController extends GenericController<UserDTO> {
         }
     }
 
-    @PutMapping("/updateProfile/{name}/{updatePhone}/{email}/{userPhone}")
+    @PostMapping("/updateProfile/{name}/{updatePhone}/{email}/{imagePath}")
     public ResponseEntity<?> updateUserInformation(@PathVariable String name,@PathVariable String updatePhone,
-                                                   @PathVariable String email, @PathVariable String userPhone){
+                                                   @PathVariable String email,@PathVariable String imagePath){
         try {
-            User user = userService.updateUserInformation(name, updatePhone, email, userPhone);
+            User user = userService.updateUserInformation(name, updatePhone, email,imagePath);
             if(user != null){
                 return ResponseEntity.ok().build();
             }

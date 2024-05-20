@@ -34,7 +34,7 @@ public class User extends Auditable {
     String OTP;
     Boolean otpFlag;
     String nationalIdentificationNumber;
-    byte[] profilePic;
+    String profilePic;
     boolean status;
 
     @OneToMany
