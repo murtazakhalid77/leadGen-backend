@@ -73,6 +73,8 @@ public class UserServiceImpl extends GenericServiceImpl<User, UserDTO> implement
 
                 return UserHomeDto.builder()
                         .firstName(user.getFirstName())
+                        .lastName(user.getLastName())
+                        .cnic(user.getNationalIdentificationNumber())
                         .email(user.getEmail())
                         .phoneNumber(user.getPhoneNumber())
                         .uid(user.getUid())

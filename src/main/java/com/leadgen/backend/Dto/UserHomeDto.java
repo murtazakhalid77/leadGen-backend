@@ -22,6 +22,6 @@ public class UserHomeDto {
     List<String> categories;
     String profilePicPath;
     String cnic;
-    UserType userType;
+    String userType;
 
 }
