@@ -28,6 +28,7 @@ public class RequestDto {
     String accepted;
     UserDTO acceptedSeller;
     Long acceptedAmount;
+    Boolean status;
 
 }
 

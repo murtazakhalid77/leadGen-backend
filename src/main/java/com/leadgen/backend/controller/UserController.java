@@ -104,11 +104,12 @@ public class UserController extends GenericController<UserDTO> {
         }
     }
 
-    @PostMapping("/updateProfile/{name}/{updatePhone}/{email}/{imagePath}")
-    public ResponseEntity<?> updateUserInformation(@PathVariable String name,@PathVariable String updatePhone,
-                                                   @PathVariable String email,@PathVariable String imagePath){
+    @PostMapping("/updateProfile/{name}/{lastName}/{updatePhone}/{updatedEmail}/{email}")
+    public ResponseEntity<?> updateUserInformation(@PathVariable String name, @PathVariable String lastName,
+                                                   @PathVariable String updatePhone, @PathVariable String updatedEmail,
+                                                   @PathVariable String email){
         try {
-            User user = userService.updateUserInformation(name, updatePhone, email,imagePath);
+            User user = userService.updateUserInformation(name, lastName, updatePhone, updatedEmail, email);
             if(user != null){
                 return ResponseEntity.ok().build();
             }
@@ -153,4 +154,5 @@ public class UserController extends GenericController<UserDTO> {
         }
         return ResponseEntity.ok(false);
     }
+
 }

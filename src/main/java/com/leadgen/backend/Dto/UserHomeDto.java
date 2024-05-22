@@ -1,5 +1,6 @@
 package com.leadgen.backend.Dto;
 
+import com.leadgen.backend.enums.UserType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -13,11 +14,14 @@ import java.util.List;
 @Data
 public class UserHomeDto {
     String firstName;
+    String lastName;
     String email;
     String adress;
     String uid;
     String phoneNumber;
     List<String> categories;
     String profilePicPath;
+    String cnic;
+    String userType;
 
 }

@@ -110,7 +110,7 @@ public class UserRequestImpl extends GenericServiceImpl<UserRequest,UserRequestD
                         .acceptedAmount(0L)
                         .approvedBySystem(false)
                         .status(false)
-                                .accepted(false)
+                        .accepted(false)
                         .build();
             }
 
@@ -129,9 +129,9 @@ public class UserRequestImpl extends GenericServiceImpl<UserRequest,UserRequestD
         List<UserRequest> savedUserRequest = new ArrayList<>();
 
         for(UserRequest request : userRequests){
-            if(request.getStatus() != null && request.getStatus()){
+//            if(request.getStatus() != null && request.getStatus()){
                 savedUserRequest.add(request);
-            }
+//            }
         }
         return mapToRequestDtoList(savedUserRequest);
     }
@@ -195,6 +195,7 @@ public class UserRequestImpl extends GenericServiceImpl<UserRequest,UserRequestD
 
             request.setNeedsAdminApproval(false);
             request.setApprovedBySystem(true);
+            request.setStatus(true);
             this.userRequestRepository.save(request);
             return request;
         }
@@ -340,6 +341,7 @@ public class UserRequestImpl extends GenericServiceImpl<UserRequest,UserRequestD
                 .locationModel(userRequest.getLocation())
                 .email(userRequest.getUser().getEmail())
                 .price(userRequest.getPrice())
+                .status(userRequest.getStatus())
                 .build();
     }
 

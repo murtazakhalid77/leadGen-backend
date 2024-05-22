@@ -73,9 +73,12 @@ public class UserServiceImpl extends GenericServiceImpl<User, UserDTO> implement
 
                 return UserHomeDto.builder()
                         .firstName(user.getFirstName())
+                        .lastName(user.getLastName())
+                        .cnic(user.getNationalIdentificationNumber())
                         .email(user.getEmail())
                         .phoneNumber(user.getPhoneNumber())
                         .uid(user.getUid())
+                        .userType(user.getUserType().toString())
                         .profilePicPath(user.getProfilePic())
                         .categories(user.getSellingCategory().stream().map(p->p.getCategoryName()).collect(Collectors.toList()))
                         .build();
@@ -145,34 +148,37 @@ public class UserServiceImpl extends GenericServiceImpl<User, UserDTO> implement
     }
 
     @Override
-    public User updateUserInformation(String name, String updatedPhone, String email, String imagePath) {
+    public User updateUserInformation(String name, String lastName, String updatedPhone, String updatedEmail, String email) {
         Optional<User> userInfo = userRepository.findByEmail(email);
 
 
         if(userInfo.isPresent()){
             User user = userInfo.get();
             if(formattedPhoneNumberFromDatabase(user.getPhoneNumber()).equalsIgnoreCase(updatedPhone)
-                    && !user.getEmail().equalsIgnoreCase(email)){
+                    && !user.getEmail().equalsIgnoreCase(updatedEmail)){
                 user.setFirstName(name);
-                user.setEmail(email);
-                user.setProfilePic(imagePath);
+                user.setEmail(updatedEmail);
+                user.setLastName(lastName);
+//                user.setProfilePic(imagePath);
                 userRepository.save(user);
                 return user;
             }
-            else if(user.getEmail().equalsIgnoreCase(email)
+            else if(user.getEmail().equalsIgnoreCase(updatedEmail)
                     && !formattedPhoneNumberFromDatabase(user.getPhoneNumber()).equalsIgnoreCase(updatedPhone)){
                 user.setFirstName(name);
+                user.setLastName(lastName);
                 user.setPhoneNumber(formatPhoneNumber(updatedPhone));
-                user.setProfilePic(imagePath);
+//                user.setProfilePic(imagePath);
                 userRepository.save(user);
                 return user;
             }
             else if(formattedPhoneNumberFromDatabase(user.getPhoneNumber()).equalsIgnoreCase(updatedPhone)
-                    && user.getEmail().equalsIgnoreCase(email)) {
+                    && user.getEmail().equalsIgnoreCase(updatedEmail)) {
                 user.setFirstName(name);
+                user.setLastName(lastName);
                 user.setPhoneNumber(formatPhoneNumber(updatedPhone));
-                user.setEmail(email);
-                user.setProfilePic(imagePath);
+                user.setEmail(updatedEmail);
+//                user.setProfilePic(imagePath);
                 userRepository.save(user);
                 return user;
             }
