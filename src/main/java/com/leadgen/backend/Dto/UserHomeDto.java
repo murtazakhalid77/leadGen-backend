@@ -19,5 +19,6 @@ public class UserHomeDto {
     String phoneNumber;
     List<String> categories;
     String profilePicPath;
+    String userType;
 
 }

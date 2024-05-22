@@ -55,6 +55,7 @@ public class UserRequestNotificationScheduler {
                             .token(user.getDeviceId())
                             .build();
 
+
                     try {
                         pushNotificationService.sendPushNotificationToToken(pushNotificationRequest);
                         logger.info("Notification sent to device: {}", user.getDeviceId());

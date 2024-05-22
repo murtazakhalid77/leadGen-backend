@@ -76,6 +76,7 @@ public class UserServiceImpl extends GenericServiceImpl<User, UserDTO> implement
                         .email(user.getEmail())
                         .phoneNumber(user.getPhoneNumber())
                         .uid(user.getUid())
+                        .userType(user.getUserType().toString())
                         .profilePicPath(user.getProfilePic())
                         .categories(user.getSellingCategory().stream().map(p->p.getCategoryName()).collect(Collectors.toList()))
                         .build();
