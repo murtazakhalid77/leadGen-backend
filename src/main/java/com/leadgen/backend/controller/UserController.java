@@ -88,10 +88,10 @@ public class UserController extends GenericController<UserDTO> {
         }
     }
 
-    @PutMapping("/updatePassword/{number}/{password}")
-    public ResponseEntity<?> updateUserPassword(@PathVariable String number,@PathVariable String password){
+    @PutMapping("/updatePassword/{email}/{password}")
+    public ResponseEntity<?> updateUserPassword(@PathVariable String email,@PathVariable String password){
         try {
-            User user = userService.updatePassword(number, password);
+            User user = userService.updatePassword(email, password);
             if(user != null){
                 return ResponseEntity.ok().build();
             }

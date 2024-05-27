@@ -5,6 +5,8 @@ import javax.transaction.Transactional;
 public interface OtpService {
     String sendOtp(String email);
 
+
+
     @Transactional
-    Boolean cratePassword(String password, String number);
+    Boolean cratePassword(String password, String number) throws Exception;
 }

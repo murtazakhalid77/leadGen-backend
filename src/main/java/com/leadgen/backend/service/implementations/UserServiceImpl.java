@@ -7,13 +7,17 @@ import com.leadgen.backend.model.Category;
 import com.leadgen.backend.model.User;
 import com.leadgen.backend.repository.CategoryRepository;
 import com.leadgen.backend.repository.UserRepository;
+import com.leadgen.backend.security.util.PasswordEncryptionUtil;
 import com.leadgen.backend.service.UserService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import javax.crypto.SecretKey;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -21,24 +25,48 @@ import java.util.stream.Collectors;
 
 import static com.leadgen.backend.helpers.HelperClass.*;
 
+
 @Service
 
 public class UserServiceImpl extends GenericServiceImpl<User, UserDTO> implements UserService {
 
-
+    @Autowired
+    private JavaMailSender mailSender;
     @Autowired
     UserRepository userRepository;
     @Autowired
     CategoryRepository categoryRepository;
-    @Autowired
-    private BCryptPasswordEncoder bCryptPasswordEncoder;
+
     @Autowired
     OtpConfiguration otpConfiguration;
-
+    @Autowired
+    private SecretKey secretKey;
     @Autowired
     public UserServiceImpl(JpaRepository<User, Long> repository, ModelMapper modelMapper) {
         super(repository, modelMapper, User.class, UserDTO.class);
 
+
+    }
+
+    public  boolean sendForgotPasswordEmail(String toEmail,
+
+                                    String otp
+    ) {
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setFrom("fa20bscs0108@maju.edu.pk");
+        message.setTo(toEmail);
+        message.setText("Greetings!\n" +
+                "\n" +
+                "To continue with your registration, here's your OTP to be entered: "+otp+
+                "\n" +
+                "Do not share this OTP with anyone else.\n" +
+                "\n" +
+                "Regards,\n" +
+                "Team Lead Gen");
+        message.setSubject("Lead gen OTP Verification");
+        mailSender.send(message);
+        System.out.println("Mail Send...");
+        return  true;
 
     }
 
@@ -49,12 +77,12 @@ public class UserServiceImpl extends GenericServiceImpl<User, UserDTO> implement
             throw new RuntimeException("User already exists with this CNIC Number: " + registerDto.getCnic());
         }
 
-        Optional<User> userByPhoneNumber = userRepository.findByPhoneNumber(formatPhoneNumber(registerDto.getPhoneNumber()));
+        Optional<User> userByPhoneNumber = userRepository.findByEmail(registerDto.getEmail());
         userByPhoneNumber.ifPresent(user -> {
             user.setFirstName(registerDto.getFirstName());
             user.setLastName(registerDto.getLastName());
             user.setNationalIdentificationNumber(registerDto.getCnic());
-            user.setEmail(registerDto.getEmail());
+            user.setPhoneNumber(formatPhoneNumber(registerDto.getPhoneNumber()));
             user.setUid(registerDto.getUid());
             user.setDeviceId(registerDto.getFcmToken());
             userRepository.save(user);
@@ -104,16 +132,16 @@ public class UserServiceImpl extends GenericServiceImpl<User, UserDTO> implement
         }
     }
 
-    @Override
-    public String forgotPassword(String number) {
-        Optional<User> user = userRepository.findByPhoneNumber(formatPhoneNumber(number));
+    public OtpAndPassword forgotPassword(String email) throws Exception {
+        Optional<User> user = userRepository.findByEmail(email);
 
-        if (user.isPresent()){
+        if (user.isPresent()) {
             String otp = generateRandomOTP();
             String otpMessage = "Your Forgot Password OTP is: " + otp;
-            String formatPhoneNumber = formatPhoneNumber(number);
 
-            boolean otpCheck = otpConfiguration.sendSMS("Lead Gen", formatPhoneNumber, otpMessage);
+            // Decrypt the user's password
+            String password = PasswordEncryptionUtil.decrypt(user.get().getPassword(), secretKey);
+            boolean otpCheck = sendForgotPasswordEmail(email, otpMessage);
             if (otpCheck) {
                 User newUser = user.get();
                 newUser.setOTP(otp);
@@ -121,24 +149,27 @@ public class UserServiceImpl extends GenericServiceImpl<User, UserDTO> implement
                 newUser.setOtpFlag(false);
 
                 userRepository.save(newUser);
-
             }
-            return otp;
-        }
-        else {
+
+            return OtpAndPassword.builder()
+                    .otp(otp)
+                    .password(password)
+                    .build();
+        } else {
             throw new RuntimeException("User Not Found");
         }
-
     }
 
+
     @Override
-    public User updatePassword(String number, String password) {
-        Optional<User> userInfo = userRepository.findByPhoneNumber(formatPhoneNumber(number));
+    public User updatePassword(String email, String password) throws Exception {
+        Optional<User> userInfo = userRepository.findByEmail(email);
 
         if(userInfo.isPresent()){
+
             User user = userInfo.get();
 
-            user.setPassword(bCryptPasswordEncoder.encode(password));
+            user.setPassword(PasswordEncryptionUtil.encrypt(password,secretKey));
             userRepository.save(user);
 
             return user;

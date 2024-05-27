@@ -17,10 +17,10 @@ import org.springframework.web.bind.annotation.*;
 public class OTPcontroller {
     private static final Logger logger = LoggerFactory.getLogger(OTPcontroller.class);
     private final OtpService otpService;
-    @PostMapping("/sendotp/{number}")
-    public ResponseEntity<?> sendOtp(@PathVariable String number) {
+    @PostMapping("/sendotp/{email}")
+    public ResponseEntity<?> sendOtp(@PathVariable String email) {
         try {
-            String otpSent = otpService.sendOtp(number);
+            String otpSent = otpService.sendOtp(email);
 
             if (otpSent != null) {
                 logger.info(otpSent);
@@ -33,10 +33,10 @@ public class OTPcontroller {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
     }
-    @PutMapping("/credentails/{password}/{number}")
-    public ResponseEntity<?> createPassword(@PathVariable String password,@PathVariable String number) {
+    @PutMapping("/credentails/{password}/{email}")
+    public ResponseEntity<?> createPassword(@PathVariable String password,@PathVariable String email) {
         try {
-            Boolean cratedPassword = otpService.cratePassword(password,number);
+            Boolean cratedPassword = otpService.cratePassword(password,email);
             if (cratedPassword) {
                 return ResponseEntity.ok().build();
             } else {
