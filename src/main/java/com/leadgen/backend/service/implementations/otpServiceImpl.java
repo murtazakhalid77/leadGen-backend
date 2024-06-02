@@ -26,11 +26,11 @@ public class otpServiceImpl implements OtpService {
     private final UserRepository userRepository;
 
     @Override
-    public String sendOtp(String phoneNumber) {
+    public String sendOtp(String email) {
         String otp = generateRandomOTP();
         String otpMessage = "Your OTP is: " + otp;
-        String formatPhoneNumber = formatPhoneNumber(phoneNumber);
-        Optional<User> existingUser = userRepository.findByPhoneNumber(formatPhoneNumber);
+//        String formatPhoneNumber = formatPhoneNumber(phoneNumber);
+        Optional<User> existingUser = userRepository.findByEmail(email);
 
         System.out.println(otp);
         if (existingUser.isPresent()) {
@@ -38,11 +38,11 @@ public class otpServiceImpl implements OtpService {
 
         }
             else {
-           boolean otpCheck = otpConfiguration.sendSMS("Lead Gen", formatPhoneNumber, otpMessage);
-             if (otpCheck) {
+//           boolean otpCheck = otpConfiguration.sendSMS("Lead Gen", formatPhoneNumber, otpMessage);
+             if (true) {
                  User newUser = User.builder()
                          .OTP(otp)
-                         .phoneNumber(formatPhoneNumber)
+                         .email(email)
                          .status(true)
                          .otpFlag(false)
                          .build();
@@ -54,9 +54,9 @@ public class otpServiceImpl implements OtpService {
     }
 
     @Override
-    public Boolean cratePassword(String password, String number) {
+    public Boolean cratePassword(String password, String email) {
 
-        Optional<User> user = userRepository.findByPhoneNumber(formatPhoneNumber(number));
+        Optional<User> user = userRepository.findByEmail(email);
         if(user.isPresent()){
             user.get().setPassword(bCryptPasswordEncoder.encode(password));
             userRepository.save(user.get());

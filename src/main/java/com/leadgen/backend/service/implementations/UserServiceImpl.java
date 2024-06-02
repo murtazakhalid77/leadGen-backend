@@ -49,12 +49,13 @@ public class UserServiceImpl extends GenericServiceImpl<User, UserDTO> implement
             throw new RuntimeException("User already exists with this CNIC Number: " + registerDto.getCnic());
         }
 
-        Optional<User> userByPhoneNumber = userRepository.findByPhoneNumber(formatPhoneNumber(registerDto.getPhoneNumber()));
+
+        Optional<User> userByPhoneNumber = userRepository.findByEmail(registerDto.getEmail());
         userByPhoneNumber.ifPresent(user -> {
             user.setFirstName(registerDto.getFirstName());
             user.setLastName(registerDto.getLastName());
             user.setNationalIdentificationNumber(registerDto.getCnic());
-            user.setEmail(registerDto.getEmail());
+            user.setPhoneNumber(formatPhoneNumber(registerDto.getPhoneNumber()));
             user.setUid(registerDto.getUid());
             user.setDeviceId(registerDto.getFcmToken());
             userRepository.save(user);

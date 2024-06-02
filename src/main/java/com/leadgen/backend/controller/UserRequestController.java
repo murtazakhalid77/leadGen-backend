@@ -36,7 +36,7 @@ public class UserRequestController extends GenericController<UserRequestDTO> {
 
     @PostMapping("saverequest")
     public ResponseEntity<UserRequest> create(@RequestBody RequestDto requestDto) throws IOException {
-      UserRequest userRequest=  userRequestService.saveUserRequest(requestDto);
+      UserRequest userRequest =  userRequestService.saveUserRequest(requestDto);
         return new ResponseEntity<UserRequest>(userRequest, HttpStatus.CREATED);
     }
 
@@ -107,6 +107,22 @@ public class UserRequestController extends GenericController<UserRequestDTO> {
             }
         } catch (NumberFormatException e) {
            throw  new RuntimeException("some error occured");
+        }
+    }
+
+    @PutMapping("/deleteRequest/{requestId}")
+    public ResponseEntity<?> deleteSellerRequest(@PathVariable Long requestId){
+        try {
+            UserRequest userRequest = this.userRequestService.deleteSellerRequest(requestId);
+            if(userRequest != null){
+                return ResponseEntity.ok(userRequest);
+            }
+            else {
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to get user request. Please try again.");
+            }
+        } catch (Exception e) {
+            // Return the exception message in the response
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
     }
 

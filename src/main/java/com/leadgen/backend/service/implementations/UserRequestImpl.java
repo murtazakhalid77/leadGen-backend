@@ -5,6 +5,7 @@ import com.leadgen.backend.model.*;
 import com.leadgen.backend.repository.CategoryRepository;
 import com.leadgen.backend.repository.UserRepository;
 import com.leadgen.backend.repository.UserRequestRepository;
+import com.leadgen.backend.scheduler.RequestDeletionNotification;
 import com.leadgen.backend.service.UserRequestService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +28,8 @@ public class UserRequestImpl extends GenericServiceImpl<UserRequest,UserRequestD
     CategoryRepository categoryRepository;
     @Autowired
     UserRepository userRepository;
+    @Autowired
+    RequestDeletionNotification requestDeletionNotification;
 
 
     @Autowired
@@ -77,6 +80,7 @@ public class UserRequestImpl extends GenericServiceImpl<UserRequest,UserRequestD
                         .status(true)
                         .acceptedAmount(0L)
                         .accepted(false)
+                        .deletedRequest(false)
                         .build();
             } else if (isNeutralSentiment && !hasProfanity) {
                 // Neutral sentiment with no profanity, needs further analysis or default action
@@ -94,6 +98,7 @@ public class UserRequestImpl extends GenericServiceImpl<UserRequest,UserRequestD
                         .acceptedAmount(0L)
                         .status(true)// Needs further analysis or default action
                         .accepted(false)
+                        .deletedRequest(false)
                         .build();
             } else {
                 // Negative sentiment or has profanity
@@ -110,7 +115,8 @@ public class UserRequestImpl extends GenericServiceImpl<UserRequest,UserRequestD
                         .acceptedAmount(0L)
                         .approvedBySystem(false)
                         .status(false)
-                                .accepted(false)
+                        .accepted(false)
+                        .deletedRequest(false)
                         .build();
             }
 
@@ -176,7 +182,7 @@ public class UserRequestImpl extends GenericServiceImpl<UserRequest,UserRequestD
 
     @Override
     public List<UserRequestDTO> getAllRequests() {
-        List<UserRequest> userRequests = this.userRequestRepository.findAll();
+        List<UserRequest> userRequests = this.userRequestRepository.getAllUserRequest();
         List<UserRequestDTO> dtos = new ArrayList<>();
 
         for(UserRequest request : userRequests){
@@ -211,6 +217,21 @@ public class UserRequestImpl extends GenericServiceImpl<UserRequest,UserRequestD
 
             request.setStatus(false);
             this.userRequestRepository.save(request);
+            return request;
+        }
+        return null;
+    }
+
+    @Override
+    public UserRequest deleteSellerRequest(Long id) {
+        Optional<UserRequest> userRequest = this.userRequestRepository.findById(id);
+
+        if(userRequest.isPresent()){
+            UserRequest request = userRequest.get();
+
+            request.setDeletedRequest(true);
+            this.userRequestRepository.save(request);
+            requestDeletionNotification.notifySellers(request);
             return request;
         }
         return null;

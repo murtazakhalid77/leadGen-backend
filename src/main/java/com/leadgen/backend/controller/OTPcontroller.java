@@ -33,10 +33,10 @@ public class OTPcontroller {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
     }
-    @PutMapping("/credentails/{password}/{number}")
-    public ResponseEntity<?> createPassword(@PathVariable String password,@PathVariable String number) {
+    @PutMapping("/credentails/{password}/{email}")
+    public ResponseEntity<?> createPassword(@PathVariable String password,@PathVariable String email) {
         try {
-            Boolean cratedPassword = otpService.cratePassword(password,number);
+            Boolean cratedPassword = otpService.cratePassword(password,email);
             if (cratedPassword) {
                 return ResponseEntity.ok().build();
             } else {

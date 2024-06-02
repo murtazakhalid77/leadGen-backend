@@ -54,4 +54,6 @@ public class UserRequest extends Auditable {
 
     Long acceptedAmount;
 
+    Boolean deletedRequest;
+
 }
