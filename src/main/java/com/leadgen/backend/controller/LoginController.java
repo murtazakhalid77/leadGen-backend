@@ -1,6 +1,7 @@
 package com.leadgen.backend.controller;
 
 import com.leadgen.backend.Dto.LoginCredentials;
+import com.leadgen.backend.Dto.OtpAndPassword;
 import com.leadgen.backend.helpers.HelperClass;
 import com.leadgen.backend.security.util.AuthenticationResponse;
 import com.leadgen.backend.security.util.JwtUtil;
@@ -44,26 +45,26 @@ public class LoginController {
             logger.warn("User Not found....");
             throw new Exception("Incorrect Username or Password ! ",e);
         }
-
         UserDetails userDetails = myUserDetailService.loadUserByUsername(loginCredentials.getEmail());
         String jwtToken = jwtUtil.generateToken(userDetails);
 
         return ResponseEntity.ok(new AuthenticationResponse(jwtToken));
-    }
+    }//update the password on firebase also
 
-    @PostMapping("user/forgot-password/{number}")
-    public ResponseEntity<String> forgotPassword(@PathVariable String number) {
+    @PostMapping("user/forgot-password/{email}")
+    public ResponseEntity<OtpAndPassword> forgotPassword(@PathVariable String email) {
         try {
-            String otpSent = userService.forgotPassword(number);
+            OtpAndPassword otpSent = userService.forgotPassword(email);
             if (otpSent != null) {
                 return ResponseEntity.ok(otpSent);
             } else {
-                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to send OTP. Please try again.");
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
             }
         } catch (Exception e) {
             // Return the exception message in the response
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }
     }
+
 
 }

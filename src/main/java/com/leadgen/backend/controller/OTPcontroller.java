@@ -17,10 +17,10 @@ import org.springframework.web.bind.annotation.*;
 public class OTPcontroller {
     private static final Logger logger = LoggerFactory.getLogger(OTPcontroller.class);
     private final OtpService otpService;
-    @PostMapping("/sendotp/{number}")
-    public ResponseEntity<?> sendOtp(@PathVariable String number) {
+    @PostMapping("/sendotp/{email}")
+    public ResponseEntity<?> sendOtp(@PathVariable String email) {
         try {
-            String otpSent = otpService.sendOtp(number);
+            String otpSent = otpService.sendOtp(email);
 
             if (otpSent != null) {
                 logger.info(otpSent);

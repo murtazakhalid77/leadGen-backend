@@ -29,7 +29,7 @@ public class UserReviewController extends GenericController<UserReviewsDTO> {
             boolean userRequest = this.userReviewsService.userReview(requestId,emailOFSeller, rating, note);
 
             if (userRequest) {
-                return ResponseEntity.ok(userRequest);
+                return ResponseEntity.ok(true);
             } else {
                 return ResponseEntity.ok(false);
 
