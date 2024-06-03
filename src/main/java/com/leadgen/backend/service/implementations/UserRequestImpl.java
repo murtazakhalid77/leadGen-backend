@@ -5,6 +5,7 @@ import com.leadgen.backend.model.*;
 import com.leadgen.backend.repository.CategoryRepository;
 import com.leadgen.backend.repository.UserRepository;
 import com.leadgen.backend.repository.UserRequestRepository;
+import com.leadgen.backend.scheduler.RequestAcceptionNotification;
 import com.leadgen.backend.scheduler.RequestDeletionNotification;
 import com.leadgen.backend.service.UserRequestService;
 import org.modelmapper.ModelMapper;
@@ -30,6 +31,8 @@ public class UserRequestImpl extends GenericServiceImpl<UserRequest,UserRequestD
     UserRepository userRepository;
     @Autowired
     RequestDeletionNotification requestDeletionNotification;
+    @Autowired
+    RequestAcceptionNotification requestAcceptionNotification;
 
 
     @Autowired
@@ -203,6 +206,7 @@ public class UserRequestImpl extends GenericServiceImpl<UserRequest,UserRequestD
             request.setApprovedBySystem(true);
             request.setStatus(true);
             this.userRequestRepository.save(request);
+            requestAcceptionNotification.notifySellersRequestAcception(request);
             return request;
         }
 

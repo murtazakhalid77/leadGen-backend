@@ -38,7 +38,7 @@ public class otpServiceImpl implements OtpService {
         String otp = generateRandomOTP();
         String otpMessage = "Your OTP is: " + otp;
 
-        Optional<User> existingUser = userRepository.findByPhoneNumber(email);
+        Optional<User> existingUser = userRepository.findByEmail(email);
 
         System.out.println(otp);
         if (existingUser.isPresent()) {
