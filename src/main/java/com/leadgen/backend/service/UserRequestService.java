@@ -17,5 +17,6 @@ public interface UserRequestService extends GenericService<UserRequestDTO> {
     UserRequest cancelSellerRequest(Long id);
     UserRequest deleteSellerRequest(Long id);
     Boolean accept(Long id, String emailOFAcceptedUser, Long acceptedAmount);
+    List<UserRequestDTO> getAllDeletedRequests();
 
 }

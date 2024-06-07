@@ -28,6 +28,9 @@ public interface UserRequestRepository extends JpaRepository<UserRequest,Long> {
     @Query("SELECT ur FROM UserRequest ur WHERE ur.deletedRequest = false ")
     List<UserRequest> getAllUserRequest();
 
+    @Query("SELECT ur FROM UserRequest ur WHERE ur.deletedRequest = true ")
+    List<UserRequest> getAllUserRequestDeleted();
+
     List<UserRequest> findByUserEmailOrderByCreatedDtDesc(String email);
 
     List<UserRequest> findByCategoryAndApprovedBySystemTrueAndNotifiedNumberGreaterThanEqualOrderByCreatedDtDesc(

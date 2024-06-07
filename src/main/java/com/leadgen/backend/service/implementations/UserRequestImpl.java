@@ -284,6 +284,18 @@ public class UserRequestImpl extends GenericServiceImpl<UserRequest,UserRequestD
         }
     }
 
+    @Override
+    public List<UserRequestDTO> getAllDeletedRequests() {
+        List<UserRequest> userRequests = this.userRequestRepository.getAllUserRequestDeleted();
+        List<UserRequestDTO> dtos = new ArrayList<>();
+
+        for(UserRequest request : userRequests){
+            dtos.add(convertToDto(request));
+        }
+
+        return dtos;
+    }
+
 
     private UserRequestDTO convertToDto(UserRequest request) {
         return UserRequestDTO.builder()

@@ -59,6 +59,12 @@ public class UserRequestController extends GenericController<UserRequestDTO> {
         return new ResponseEntity<List<UserRequestDTO>>(requestDTOS, HttpStatus.OK);
     }
 
+    @GetMapping("/getAllDeletedRequests")
+    public ResponseEntity<?> getAllDeletedRequests(){
+        List<UserRequestDTO> requestDTOS = this.userRequestService.getAllDeletedRequests();
+        return new ResponseEntity<List<UserRequestDTO>>(requestDTOS, HttpStatus.OK);
+    }
+
     @PutMapping("/setApproval/{requestId}")
     public ResponseEntity<?> setRequestAdminApproval(@PathVariable Long requestId){
         try {
@@ -125,8 +131,5 @@ public class UserRequestController extends GenericController<UserRequestDTO> {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
     }
-
-
-
 
 }
